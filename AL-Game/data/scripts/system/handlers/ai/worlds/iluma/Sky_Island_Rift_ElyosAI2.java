@@ -30,8 +30,8 @@ import com.aionemu.gameserver.utils.PacketSendUtility;
 /****/
 
 @AIName("sky_island_rift_E")
-public class Sky_Island_Rift_ElyosAI2 extends NpcAI2
-{
+public class Sky_Island_Rift_ElyosAI2 extends NpcAI2 {
+
 	@Override
 	protected void handleSpawned() {
 		super.handleSpawned();
@@ -62,12 +62,12 @@ public class Sky_Island_Rift_ElyosAI2 extends NpcAI2
 	
 	@Override
     protected void handleDialogStart(Player player) {
-        if (player.isArchDaeva()) {
+/*         if (player.isArchDaeva()) { */
 		    //This is a Sky Island Teleport Stone, to which Aether energy is gathered.
 			//It feels like a powerful beam of Aether energy is shooting out towards the sky.
 			//You may be able to reach the island in the sky by using the power infused in the fragment.
 			PacketSendUtility.sendPacket(player, new SM_DIALOG_WINDOW(getObjectId(), 1011));
-		}
+/* 		} */
     }
 	
     @Override

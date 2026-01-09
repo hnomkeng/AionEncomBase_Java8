@@ -23,10 +23,9 @@ import com.aionemu.gameserver.questEngine.model.QuestStatus;
 /** Author Ghostfur & Unknown (Aion-Unique)
 /****/
 
-public class _15431Shield_Silversleet_Outpost extends QuestHandler
-{
+public class _15431Shield_Silversleet_Outpost extends QuestHandler {
+
     private final static int questId = 15431;
-	
     public _15431Shield_Silversleet_Outpost() {
         super(questId);
     }
@@ -34,11 +33,11 @@ public class _15431Shield_Silversleet_Outpost extends QuestHandler
     public void register() {
         qe.registerQuestNpc(805386).addOnQuestStart(questId);
         qe.registerQuestNpc(805386).addOnTalkEvent(questId);
-		qe.registerQuestNpc(882987).addOnKillEvent(questId);
-		qe.registerQuestNpc(882988).addOnKillEvent(questId);
-		qe.registerQuestNpc(882989).addOnKillEvent(questId);
-		qe.registerQuestNpc(882990).addOnKillEvent(questId);
-		qe.registerQuestNpc(882991).addOnKillEvent(questId);
+		qe.registerQuestNpc(883346).addOnKillEvent(questId);
+		qe.registerQuestNpc(883347).addOnKillEvent(questId);
+		qe.registerQuestNpc(883348).addOnKillEvent(questId);
+		qe.registerQuestNpc(883349).addOnKillEvent(questId);
+		qe.registerQuestNpc(883350).addOnKillEvent(questId);
     }
 	
     @Override
@@ -83,11 +82,11 @@ public class _15431Shield_Silversleet_Outpost extends QuestHandler
         QuestState qs = player.getQuestStateList().getQuestState(questId);
         if (qs != null && qs.getStatus() == QuestStatus.START) {
             switch (env.getTargetId()) {
-                case 882987:
-				case 882988:
-				case 882989:
-				case 882990:
-				case 882991:
+                case 883346:
+				case 883347:
+				case 883348:
+				case 883349:
+				case 883350:
                 if (qs.getQuestVarById(1) < 5) {
 					qs.setQuestVarById(1, qs.getQuestVarById(1) + 1);
 					updateQuestStatus(env);

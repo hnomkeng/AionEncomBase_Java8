@@ -32,7 +32,6 @@ public class _16838Records_Of_The_Abyss extends QuestHandler {
     }
 	
     public void register() {
-        qe.registerQuestNpc(806566).addOnQuestStart(questId);
         qe.registerQuestNpc(806566).addOnTalkEvent(questId);
 		qe.registerQuestNpc(703454).addOnTalkEvent(questId);
 		qe.registerQuestNpc(806566).addOnAtDistanceEvent(questId);
@@ -44,25 +43,7 @@ public class _16838Records_Of_The_Abyss extends QuestHandler {
 		int targetId = env.getTargetId();
 		final QuestState qs = player.getQuestStateList().getQuestState(questId);
 		QuestDialog dialog = env.getDialog();
-		if (qs == null || qs.getStatus() == QuestStatus.NONE) {
-			if (targetId == 806566) {
-				switch (env.getDialog()) {
-					case START_DIALOG: {
-						return sendQuestDialog(env, 4762);
-					}
-					case ACCEPT_QUEST:
-					case ACCEPT_QUEST_SIMPLE:
-						return sendQuestStartDialog(env);
-					case REFUSE_QUEST_SIMPLE:
-				        return closeDialogWindow(env);
-				}
-			}
-		} else if (targetId == 703454) {
-			if (dialog == QuestDialog.USE_OBJECT) {
-				closeDialogWindow(env);
-				return true;
-			}
-		} else if (qs.getStatus() == QuestStatus.START) {
+        if (qs == null || qs.getStatus() == QuestStatus.START) {
 			if (targetId == 806566) {
 				switch (env.getDialog()) {
 					case START_DIALOG: {
@@ -78,7 +59,14 @@ public class _16838Records_Of_The_Abyss extends QuestHandler {
 					}
 				}
 			}
-		} else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+		}
+        if (targetId == 703454) {
+			if (dialog == QuestDialog.USE_OBJECT) {
+				closeDialogWindow(env);
+				return true;
+			}
+		} 
+        else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
             if (targetId == 806566) {
                 if (env.getDialog() == QuestDialog.START_DIALOG) {
                     return sendQuestDialog(env, 10002);

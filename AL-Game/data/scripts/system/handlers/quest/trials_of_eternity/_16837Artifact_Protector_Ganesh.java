@@ -32,7 +32,6 @@ public class _16837Artifact_Protector_Ganesh extends QuestHandler {
     }
 	
     public void register() {
-        qe.registerQuestNpc(806564).addOnQuestStart(questId);
         qe.registerQuestNpc(806564).addOnTalkEvent(questId);
 		qe.registerQuestNpc(806568).addOnTalkEvent(questId);
 		qe.registerQuestNpc(246418).addOnKillEvent(questId);
