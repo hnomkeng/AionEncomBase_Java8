@@ -97,25 +97,25 @@
     <hotspot_template loc_id="77" mapid="220140000" name="HOTSPOT_DF4_03" name_id="404995" posX="796.000000" posY="1686.000000" posZ="362.000000" heading="45" race="ASMODIANS" price="1286"/>
 	<hotspot_template loc_id="117" mapid="220140000" name="HOTSPOT_DF4_04" name_id="404996" posX="1794.000000" posY="1811.000000" posZ="406.000000" heading="225" race="ASMODIANS" price="1286"/>
 	<hotspot_template loc_id="121" mapid="220140000" name="HOTSPOT_DF4_F2P_01" name_id="404997" posX="1410.000000" posY="1975.000000" posZ="352.000000" heading="0" race="ASMODIANS" price="1286"/>
-	<hotspot_template loc_id="88" mapid="220080000" name="Dragon Rest Temple" name_id="404968" price="9321" race="ASMODIANS" posX="452.000000" posY="2255.000000" posZ="223.000000" heading="0"/>
-	<hotspot_template loc_id="89" mapid="220080000" name="Dawnbreak Temple" name_id="404969" price="9321" race="ASMODIANS" posX="2688.000000" posY="1422.000000" posZ="341.000000" heading="0"/>
+	<hotspot_template loc_id="88" mapid="220080000" name="Dragon Rest Temple" name_id="404968" price="9321" race="ASMODIANS" posX="452.000000" posY="2255.000000" posZ="220.000000" heading="0"/>
+	<hotspot_template loc_id="89" mapid="220080000" name="Dawnbreak Temple" name_id="404969" price="9321" race="ASMODIANS" posX="2688.000000" posY="1422.000000" posZ="338.000000" heading="0"/>
 	<hotspot_template loc_id="90" mapid="220080000" name="Whirlpool Temple" name_id="404970" price="9321" race="ASMODIANS" posX="1579.000000" posY="151.000000" posZ="187.000000" heading="0"/>
 	<hotspot_template loc_id="91" mapid="210070000" name="Aequis Expedition Headquarters" name_id="404971" price="9321" race="ELYOS" posX="2901.000000" posY="802.000000" posZ="570.000000" heading="0"/>
-	<hotspot_template loc_id="92" mapid="210070000" name="Aequis Advance Post" name_id="404972" price="9321" race="ELYOS" posX="510.000000" posY="1901.000000" posZ="470.000000" heading="0"/>
-	<hotspot_template loc_id="93" mapid="210070000" name="Aequis Outpost" name_id="404973" price="9321" race="ELYOS" posX="2173.000000" posY="2903.000000" posZ="330.000000" heading="0"/>
+	<hotspot_template loc_id="92" mapid="210070000" name="Aequis Advance Post" name_id="404972" price="9321" race="ELYOS" posX="510.000000" posY="1901.000000" posZ="467.000000" heading="79"/>
+	<hotspot_template loc_id="93" mapid="210070000" name="Aequis Outpost" name_id="404973" price="9321" race="ELYOS" posX="2173.000000" posY="2903.000000" posZ="325.000000" heading="0"/>
 	<hotspot_template loc_id="94" mapid="220010000" name="The Forsaken Hollow" name_id="404975" price="44" race="ASMODIANS" posX="385.000000" posY="1889.000000" posZ="328.000000" heading="0"/>
 	<hotspot_template loc_id="95" mapid="210040000" name="Middleton" name_id="404976" price="3504" race="ELYOS" posX="1824.000000" posY="1603.000000" posZ="128.000000" heading="0"/>
 	<hotspot_template loc_id="96" mapid="220040000" name="Frost Spirit Valley" name_id="404977" price="3504" race="ASMODIANS" posX="2565.000000" posY="1351.000000" posZ="385.000000" heading="0"/>
 	<hotspot_template loc_id="97" mapid="220040000" name="South Gate" name_id="404978" price="3504" race="ASMODIANS" posX="2158.000000" posY="2097.000000" posZ="598.000000" heading="0"/>
 	<hotspot_template loc_id="98" mapid="220040000" name="Fang Troll Encampment" name_id="404979" price="3504" race="ASMODIANS" posX="1739.000000" posY="1717.000000" posZ="573.000000" heading="0"/>
-	<hotspot_template loc_id="99" mapid="220080000" name="Arden Village" name_id="404980" price="12800" race="ASMODIANS" posX="1771.000000" posY="2535.000000" posZ="300.000000" heading="0"/>
-	<hotspot_template loc_id="100" mapid="220080000" name="Cet Village" name_id="404981" price="12800" race="ASMODIANS" posX="1509.000000" posY="1725.000000" posZ="334.000000" heading="0"/>
-	<hotspot_template loc_id="101" mapid="220080000" name="Bomire Village" name_id="404982" price="12800" race="ASMODIANS" posX="756.000000" posY="1254.000000" posZ="255.000000" heading="0"/>
-	<hotspot_template loc_id="102" mapid="210070000" name="Henor Territory Village" name_id="404983" price="12800" race="ELYOS" posX="1389.000000" posY="606.000000" posZ="589.000000" heading="0"/>
-	<hotspot_template loc_id="103" mapid="210070000" name="Aedra Territory Village" name_id="404984" price="12800" race="ELYOS" posX="1161.000000" posY="1580.000000" posZ="468.000000" heading="0"/>
-	<hotspot_template loc_id="104" mapid="210070000" name="Erivale Territory Village" name_id="404985" price="12800" race="ELYOS" posX="2395.000000" posY="1500.000000" posZ="443.000000" heading="0"/>
-	<hotspot_template loc_id="105" mapid="220080000" name="Fatebound Legion Outpost" name_id="404987" price="12800" race="ASMODIANS" posX="2389.000000" posY="795.000000" posZ="289.000000" heading="0"/>
-	<hotspot_template loc_id="106" mapid="210070000" name="Aequis Detachment Post" name_id="404986" price="12800" race="ELYOS" posX="1136.000000" posY="2918.000000" posZ="303.000000" heading="0"/>
+	<hotspot_template loc_id="99" mapid="220080000" name="Arden Village" name_id="404980" price="12800" race="ASMODIANS" posX="1771.000000" posY="2535.000000" posZ="298.000000" heading="0"/>
+	<hotspot_template loc_id="100" mapid="220080000" name="Cet Village" name_id="404981" price="12800" race="ASMODIANS" posX="1509.000000" posY="1725.000000" posZ="328.000000" heading="0"/>
+	<hotspot_template loc_id="101" mapid="220080000" name="Bomire Village" name_id="404982" price="12800" race="ASMODIANS" posX="756.000000" posY="1254.000000" posZ="251.000000" heading="0"/>
+	<hotspot_template loc_id="102" mapid="210070000" name="Henor Territory Village" name_id="404983" price="12800" race="ELYOS" posX="1389.000000" posY="606.000000" posZ="581.000000" heading="0"/>
+	<hotspot_template loc_id="103" mapid="210070000" name="Aedra Territory Village" name_id="404984" price="12800" race="ELYOS" posX="1161.000000" posY="1580.000000" posZ="466.000000" heading="0"/>
+	<hotspot_template loc_id="104" mapid="210070000" name="Erivale Territory Village" name_id="404985" price="12800" race="ELYOS" posX="2395.000000" posY="1500.000000" posZ="438.000000" heading="0"/>
+	<hotspot_template loc_id="105" mapid="220080000" name="Fatebound Legion Outpost" name_id="404987" price="12800" race="ASMODIANS" posX="2389.000000" posY="795.000000" posZ="287.000000" heading="0"/>
+	<hotspot_template loc_id="106" mapid="210070000" name="Aequis Detachment Post" name_id="404986" price="12800" race="ELYOS" posX="1136.000000" posY="2918.000000" posZ="291.000000" heading="0"/>
 	<!-- 5.3 -->
 	<hotspot_template loc_id="107" mapid="302200000" name="Elyos Square" name_id="400508" price="1934" race="ELYOS" posX="1460.000000" posY="1448.000000" posZ="573.000000" heading="0"/>
 	<hotspot_template loc_id="108" mapid="302200000" name="Divine Road" name_id="400509" price="1934" race="ELYOS" posX="1930.000000" posY="1517.000000" posZ="590.000000" heading="0"/>
