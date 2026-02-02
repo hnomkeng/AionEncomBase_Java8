@@ -74,62 +74,103 @@ public class SimpleAttackManager {
 		ThreadPoolManager.getInstance().schedule(new SimpleCheckedAttackAction(npcAI), delay);
 	}
 	
-	public static boolean isTargetInAttackRange(Npc npc) {
-		// 检查 NPC 和目标是否为空
-		// Check if NPC and target are null
-		if (npc == null || npc.getTarget() == null) {
-			return false;
-		}
-		//在 isTargetInAttackRange 方法中添加了对 npc 和 npc.getTarget() 的空值检查。
-		//这是为了防止在调用 MathUtil.getDistance 方法时出现 NullPointerException 。
-		//通过确保 npc 和 npc.getTarget() 不为空，可以提高代码的健壮性和稳定性。
-		// 如果启用了日志记录，记录目标距离
-		// Log the distance to the target if logging is enabled
-		if (npc.getAi2().isLogging()) {
-			float distance = npc.getDistanceToTarget();
-			AI2Logger.info((AbstractAI) npc.getAi2(), "isTargetInAttackRange: " + distance);
-		}
-		
-		// 检查 NPC 是否能看到目标，以及目标是否是 Creature 类型
-		// Check if NPC can see the target and if the target is of type Creature
-		if (!GeoService.getInstance().canSee(npc, npc.getTarget()) || !(npc.getTarget() instanceof Creature)) {
-			return false;
-		}
-		
-		// 检查目标是否在攻击范围内
-		// Check if the target is within attack range
-		return MathUtil.isInAttackRange(npc, (Creature) npc.getTarget(),
-				npc.getGameStats().getAttackRange().getCurrent() / 1000f);
-	}
+    public static boolean isTargetInAttackRange(Npc npc) {
+    if (npc == null) {
+        return false;
+    }
+    
+    if (npc.getTarget() == null) {
+        return false;
+    }
+    
+    if (!(npc.getTarget() instanceof Creature)) {
+        return false;
+    }
+    
+    Creature target = (Creature) npc.getTarget();
+    
+    if (!target.isSpawned() || target.getLifeStats() == null || target.getLifeStats().isAlreadyDead()) {
+        return false;
+    }
+    
+    if (npc.getAi2().isLogging()) {
+        try {
+            float distance = npc.getDistanceToTarget();
+            AI2Logger.info((AbstractAI) npc.getAi2(), "isTargetInAttackRange: " + distance);
+        } catch (Exception e) {
+        }
+    }
+    
+    try {
+        if (!GeoService.getInstance().canSee(npc, npc.getTarget())) {
+            return false;
+        }
+    } catch (NullPointerException e) {
+        if (npc.getAi2().isLogging()) {
+            AI2Logger.info((AbstractAI) npc.getAi2(), "GeoService.canSee NPE: " + e.getMessage());
+        }
+        return false;
+    }
+    
+    try {
+        return MathUtil.isInAttackRange(npc, target, npc.getGameStats().getAttackRange().getCurrent() / 1000f);
+    } catch (NullPointerException e) {
+        if (npc.getAi2().isLogging()) {
+            AI2Logger.info((AbstractAI) npc.getAi2(), "MathUtil.isInAttackRange NPE: " + e.getMessage());
+        }
+        return false;
+        }
+    }
 
 	/**
 	 * @param npcAI
 	 */
-	protected static void attackAction(final NpcAI2 npcAI) {
-		if (!npcAI.isInState(AIState.FIGHT)) {
-			return;
-		}
-		if (npcAI.isLogging()) {
-			AI2Logger.info(npcAI, "attackAction");
-		}
-		Npc npc = npcAI.getOwner();
-		Creature target = (Creature) npc.getTarget();
-		if (target != null && !target.getLifeStats().isAlreadyDead()) {
-			if (isTargetInAttackRange(npc) && npc.canSee(target)) {
-				npc.getController().attackTarget(target, 0);
-				npcAI.onGeneralEvent(AIEventType.ATTACK_COMPLETE);
-				return;
-			}
-			npcAI.onGeneralEvent(AIEventType.TARGET_TOOFAR);
-		} else {
-			npcAI.onGeneralEvent(AIEventType.TARGET_GIVEUP);
-		}
-	}
+    protected static void attackAction(final NpcAI2 npcAI) {
+    if (!npcAI.isInState(AIState.FIGHT)) {
+        return;
+    }
+    if (npcAI.isLogging()) {
+        AI2Logger.info(npcAI, "attackAction");
+    }
+    
+    Npc npc = npcAI.getOwner();
+    
+    if (npc == null) {
+        npcAI.onGeneralEvent(AIEventType.TARGET_GIVEUP);
+        return;
+    }
+    
+    Creature target = (Creature) npc.getTarget();
+    
+    if (target == null) {
+        npcAI.onGeneralEvent(AIEventType.TARGET_GIVEUP);
+        return;
+    }
+    
+    if (target.getLifeStats() == null || target.getLifeStats().isAlreadyDead() || !target.isSpawned()) {
+        npcAI.onGeneralEvent(AIEventType.TARGET_GIVEUP);
+        return;
+    }
+    
+    if (isTargetInAttackRange(npc)) {
+        try {
+            if (npc.canSee(target)) {
+                npc.getController().attackTarget(target, 0);
+                npcAI.onGeneralEvent(AIEventType.ATTACK_COMPLETE);
+                return;
+            }
+        } catch (NullPointerException e) {
+            if (npcAI.isLogging()) {
+                AI2Logger.info(npcAI, "Error in canSee check: " + e.getMessage());
+            }
+        }
+    }
+    
+    npcAI.onGeneralEvent(AIEventType.TARGET_TOOFAR);
+    }
 
 	private final static class SimpleAttackAction implements Runnable {
-
 		private NpcAI2 npcAI;
-
 		SimpleAttackAction(NpcAI2 npcAI) {
 			this.npcAI = npcAI;
 		}
@@ -142,9 +183,7 @@ public class SimpleAttackManager {
 	}
 
 	private final static class SimpleCheckedAttackAction implements Runnable {
-
 		private NpcAI2 npcAI;
-
 		SimpleCheckedAttackAction(NpcAI2 npcAI) {
 			this.npcAI = npcAI;
 		}

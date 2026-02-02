@@ -10,10 +10,9 @@ import com.aionemu.gameserver.questEngine.model.QuestState;
 import com.aionemu.gameserver.questEngine.model.QuestStatus;
 import com.aionemu.gameserver.world.zone.ZoneName;
                               
-public class _14050Orders_From_Heiron_Fortress extends QuestHandler
-{
+public class _14050Orders_From_Heiron_Fortress extends QuestHandler {
+
     private final static int questId = 14050;
-	
     public _14050Orders_From_Heiron_Fortress() {
         super(questId);
     }
@@ -42,7 +41,7 @@ public class _14050Orders_From_Heiron_Fortress extends QuestHandler
             } else if (env.getDialogId() == 1009) {
                 qs.setStatus(QuestStatus.REWARD);
                 updateQuestStatus(env);
-                return sendQuestDialog(env, 5);
+                return sendQuestEndDialog(env);
             }
             return false;
         } else if (qs.getStatus() == QuestStatus.REWARD) {

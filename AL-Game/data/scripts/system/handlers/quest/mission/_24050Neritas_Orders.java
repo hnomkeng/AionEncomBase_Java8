@@ -57,7 +57,6 @@ public class _24050Neritas_Orders extends QuestHandler {
 				updateQuestStatus(env);
 				return sendQuestDialog(env, 5);
 			}
-			return false;
 		} else if (qs.getStatus() == QuestStatus.REWARD) {
 			if (env.getDialogId() == 23) {
 				int[] ids = {24051, 24052, 24053, 24054};

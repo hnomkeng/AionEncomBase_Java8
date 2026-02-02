@@ -19,6 +19,7 @@ import com.aionemu.gameserver.questEngine.model.QuestDialog;
 import com.aionemu.gameserver.questEngine.model.QuestEnv;
 import com.aionemu.gameserver.questEngine.model.QuestState;
 import com.aionemu.gameserver.questEngine.model.QuestStatus;
+import com.aionemu.gameserver.services.QuestService;
 import com.aionemu.gameserver.world.zone.ZoneName;
 
 /****/
@@ -34,6 +35,11 @@ public class _3123The_Sealed_Lord extends QuestHandler {
 	
 	@Override
 	public boolean onEnterZoneEvent(QuestEnv env, ZoneName zoneName) {
+		Player player = env.getPlayer();
+		QuestState qs = player.getQuestStateList().getQuestState(questId);
+        if (qs == null || qs.getStatus() == QuestStatus.NONE) {
+           QuestService.startQuest(env);
+        } 
 		return defaultOnEnterZoneEvent(env, zoneName, ZoneName.get("THEOBOMOS_LAB_INTERIOR_310110000"));
 	}
 	
@@ -57,32 +63,11 @@ public class _3123The_Sealed_Lord extends QuestHandler {
 		int targetId = env.getTargetId();
 		if (env.getVisibleObject() instanceof Npc) {
 			targetId = ((Npc) env.getVisibleObject()).getNpcId();
-		} if (qs == null || qs.getStatus() == QuestStatus.NONE || qs.canRepeat()) {
-			if (targetId == 0) {
-				switch (dialog) {
-					case START_DIALOG:
-						return sendQuestDialog(env, 4762);
-					case ACCEPT_QUEST:
-					case ACCEPT_QUEST_SIMPLE:
-						return sendQuestStartDialog(env);
-					case REFUSE_QUEST_SIMPLE:
-				        return closeDialogWindow(env);
-				}
-			}
-		} else if (qs.getStatus() == QuestStatus.START) {
-			switch (targetId) {
-				case 237258: {
-					switch (dialog) {
-						case START_DIALOG: {
-							return sendQuestDialog(env, 10002);
-						} case SELECT_REWARD: {
-							return sendQuestEndDialog(env);
-						} default:
-							return sendQuestEndDialog(env);
-					}
-				}
-			}
-		} else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+		}
+        if (qs == null || qs.getStatus() == QuestStatus.NONE) {
+           return false;
+        } 
+        else if (qs != null && qs.getStatus() == QuestStatus.REWARD) {
 		    if (targetId == 237258) {
 			    switch (dialog) {
 					case SELECT_REWARD: {
@@ -95,26 +80,31 @@ public class _3123The_Sealed_Lord extends QuestHandler {
 		return false;
 	}
 	
-	@Override
-	public boolean onKillEvent(QuestEnv env) {
-		Player player = env.getPlayer();
-		QuestState qs = player.getQuestStateList().getQuestState(questId);
-		if (qs != null && qs.getStatus() == QuestStatus.START) {
-			int var = qs.getQuestVarById(0);
-			if (var == 0) { //Fiery Sealing Stone.
-				return defaultOnKillEvent(env, 237253, 0, 1);
-			} else if(var == 1) { //Watcher Queen Arachne.
-				return defaultOnKillEvent(env, 237246, 1, 2);
-			} else if(var == 2) { //Watcher Silikor Of Memory.
-				return defaultOnKillEvent(env, 237248, 2, 3);
-			} else if(var == 3) { //Watcher Jilitia.
-				return defaultOnKillEvent(env, 237249, 3, 4);
-			} else if(var == 4) { //Sealed Unstable Triroan.
-				return defaultOnKillEvent(env, 237250, 4, 5);
-			} else if(var == 5) { //Corrupted Ifrit.
-				return defaultOnKillEvent(env, 237251, 5, true);
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean onKillEvent(QuestEnv env) {
+    Player player = env.getPlayer();
+    QuestState qs = player.getQuestStateList().getQuestState(questId);
+    if (qs != null && qs.getStatus() == QuestStatus.START) {
+        int var = qs.getQuestVarById(0);
+        if (var == 0) { //Fiery Sealing Stone.
+            return defaultOnKillEvent(env, 237253, 0, 1);
+        } else if(var == 1) { //Watcher Queen Arachne.
+            return defaultOnKillEvent(env, 237246, 1, 2);
+        } else if(var == 2) { //Watcher Silikor Of Memory.
+            return defaultOnKillEvent(env, 237248, 2, 3);
+        } else if(var == 3) { //Watcher Jilitia.
+            return defaultOnKillEvent(env, 237249, 3, 4);
+        } else if(var == 4) { //Sealed Unstable Triroan.
+            return defaultOnKillEvent(env, 237250, 4, 5);
+        } else if(var == 5) { //Corrupted Ifrit.
+            if (env.getTargetId() == 237251) {
+                qs.setQuestVarById(0, 6);
+                qs.setStatus(QuestStatus.REWARD);
+                updateQuestStatus(env);
+                return true;
+            }
+        }
+    }
+    return false;
+    }
 }

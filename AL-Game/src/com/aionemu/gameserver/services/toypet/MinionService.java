@@ -95,10 +95,8 @@ public class MinionService {
 			public void abort() {
 				player.getController().cancelTask(TaskId.ITEM_USE);
 				player.removeItemCoolDown(item.getItemTemplate().getUseLimits().getDelayId());
-				PacketSendUtility.sendPacket(player,
-						SM_SYSTEM_MESSAGE.STR_ITEM_CANCELED(new DescriptionId(item.getItemTemplate().getNameId())));
-				PacketSendUtility.broadcastPacket(player,
-						new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), itemObjId, item.getItemId(), 0, 2), true);
+				PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_ITEM_CANCELED(new DescriptionId(item.getItemTemplate().getNameId())));
+				PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), itemObjId, item.getItemId(), 0, 2), true);
 				player.getObserveController().removeObserver(this);
 			}
 		};
@@ -110,8 +108,7 @@ public class MinionService {
 			public void run() {
 				player.getObserveController().removeObserver(itemUseObserver);
 				player.getController().cancelTask(TaskId.ITEM_USE);
-				PacketSendUtility.broadcastPacket(player,
-						new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), itemObjId, item.getItemId(), 0, 1), true);
+				PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), itemObjId, item.getItemId(), 0, 1), true);
 
 				if (!player.getInventory().decreaseByObjectId(itemObjId, 1)) {
 					return;
@@ -127,7 +124,6 @@ public class MinionService {
 				}
 
 				MinionTemplate minionTemplate = null;
-				// Изменение шансов на создание Миньонов (Уменьшил максимально A грейд, если нужно правте)
 				if (item.getItemTemplate().isMinionCashContract()) {
 					switch (item.getItemTemplate().getTemplateId()) {
 						case 190080017: // Shita (A)
@@ -222,26 +218,42 @@ public class MinionService {
 				if (qs.getStatus() == QuestStatus.START) {
 					qs.setQuestVar(1);
 					qs.setStatus(QuestStatus.REWARD);
-					PacketSendUtility.sendPacket(player,
-							new SM_QUEST_ACTION(15545, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+					PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(15545, qs.getStatus(), qs.getQuestVars().getQuestVars()));
 					player.getController().updateNearbyQuests();
 				}
 			}
-			break;
+            if (player.getQuestStateList().hasQuest(19900) && item.getItemId() == 190080010) {
+                QuestState qs = player.getQuestStateList().getQuestState(19900);
+                if (qs.getStatus() == QuestStatus.START) {
+                    qs.setQuestVar(1);
+                    qs.setStatus(QuestStatus.REWARD);
+                    PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(19900, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+                    player.getController().updateNearbyQuests();
+                }
+            }
+            break;
 		case ASMODIANS:
 			if (player.getQuestStateList().hasQuest(25545) && item.getItemId() == 190080011) {
 				QuestState qs = player.getQuestStateList().getQuestState(25545);
 				if (qs.getStatus() == QuestStatus.START) {
 					qs.setQuestVar(1);
 					qs.setStatus(QuestStatus.REWARD);
-					PacketSendUtility.sendPacket(player,
-							new SM_QUEST_ACTION(25545, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+					PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(25545, qs.getStatus(), qs.getQuestVars().getQuestVars()));
 					player.getController().updateNearbyQuests();
 				}
 			}
-			break;
-		default:
-			break;
+            if (player.getQuestStateList().hasQuest(29900) && item.getItemId() == 190080011) {
+                QuestState qs = player.getQuestStateList().getQuestState(29900);
+                if (qs.getStatus() == QuestStatus.START) {
+                    qs.setQuestVar(1);
+                    qs.setStatus(QuestStatus.REWARD);
+                    PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(29900, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+                    player.getController().updateNearbyQuests();
+                }
+            }
+            break;
+        default:
+            break;
 		}
 	}
 
@@ -273,8 +285,7 @@ public class MinionService {
 			despawnMinionObjId = minionObjId;
 		}
 		MinionCommonData minionCommonData = player.getMinionList().getMinion(despawnMinionObjId);
-		Iterator<MinionSkill> iterator = DataManager.MINION_DATA.getMinionTemplate(minionCommonData.getMinionId())
-				.getAction().getSkillsCollections().iterator();
+		Iterator<MinionSkill> iterator = DataManager.MINION_DATA.getMinionTemplate(minionCommonData.getMinionId()).getAction().getSkillsCollections().iterator();
 		while (iterator.hasNext()) {
 			SkillLearnService.removeSkill(player, iterator.next().getSkillId());
 		}
@@ -297,8 +308,7 @@ public class MinionService {
 			for (int matObjt : material) {
 				if (list.getObjectId() == matObjt) {
 					int minionGrowth = 0;
-					if (DataManager.MINION_DATA.getMinionTemplate(list.getMinionId()).getGrade()
-							.equalsIgnoreCase(tierGrade)) {
+					if (DataManager.MINION_DATA.getMinionTemplate(list.getMinionId()).getGrade().equalsIgnoreCase(tierGrade)) {
 						minionGrowth = DataManager.MINION_DATA.getMinionTemplate(list.getMinionId()).getGrowthPt() * 2;
 					} else {
 						minionGrowth = DataManager.MINION_DATA.getMinionTemplate(list.getMinionId()).getGrowthPt();
@@ -332,8 +342,7 @@ public class MinionService {
 
 	public void evolutionUpMinion(Player player, int minionObjId) {
 		MinionCommonData minion = player.getMinionList().getMinion(minionObjId);
-		MinionEvolved items = DataManager.MINION_DATA
-				.getMinionTemplate(player.getMinionList().getMinion(minionObjId).getMinionId()).getEvolved();
+		MinionEvolved items = DataManager.MINION_DATA.getMinionTemplate(player.getMinionList().getMinion(minionObjId).getMinionId()).getEvolved();
 		if (minion.getMinionLevel() >= 4) {
 			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_FAMILIAR_EVOLVE_MSG_NOEVOLVE);
 			return;
@@ -416,8 +425,7 @@ public class MinionService {
 	}
 
 	// TODO
-	public void addMinionFunctionItems(Player player, int action, int minionObjectId, int itemId, int targetSlot,
-			int destinationSlot) {
+	public void addMinionFunctionItems(Player player, int action, int minionObjectId, int itemId, int targetSlot, int destinationSlot) {
 		if (player.getMinion() == null) {
 			return;
 		}
@@ -433,8 +441,7 @@ public class MinionService {
 		for (int a : minions.getCommonData().getDopingBag().getScrollsUsed()) {
 			System.out.println("Minion Bag scroll:" + a);
 		}
-		DAOManager.getDAO(PlayerMinionsDAO.class).saveDopingBag(player, minions.getCommonData(),
-				minions.getCommonData().getDopingBag());
+		DAOManager.getDAO(PlayerMinionsDAO.class).saveDopingBag(player, minions.getCommonData(), minions.getCommonData().getDopingBag());
 		PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, itemId, targetSlot, 0), true);
 	}
 
@@ -459,8 +466,7 @@ public class MinionService {
 			ThreadPoolManager.getInstance().schedule(new Runnable() {
 				@Override
 				public void run() {
-					PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, useItemId, slot, 0),
-							true);
+					PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, useItemId, slot, 0), true);
 				}
 			}, useDelay);
 			return;
@@ -502,18 +508,14 @@ public class MinionService {
 		int targetItem = scrollBag[targetSlot - 2];
 		if (destinationSlot - 2 > scrollBag.length - 1) {
 			minions.getDopingBag().setItem(targetItem, destinationSlot);
-			PacketSendUtility.broadcastPacket(player,
-					new SM_MINIONS(8, 0, minionObjectId, targetItem, targetSlot, destinationSlot), true);
+			PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, targetItem, targetSlot, destinationSlot), true);
 			minions.getDopingBag().setItem(0, targetSlot);
-			PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, targetItem, targetSlot, 0),
-					true);
+			PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, targetItem, targetSlot, 0), true);
 		} else {
 			minions.getDopingBag().setItem(scrollBag[destinationSlot - 2], targetSlot);
-			PacketSendUtility.broadcastPacket(player,
-					new SM_MINIONS(8, 0, minionObjectId, scrollBag[destinationSlot - 2], targetSlot, 0), true);
+			PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, scrollBag[destinationSlot - 2], targetSlot, 0), true);
 			minions.getDopingBag().setItem(targetItem, destinationSlot);
-			PacketSendUtility.broadcastPacket(player,
-					new SM_MINIONS(8, 0, minionObjectId, targetItem, 0, destinationSlot), true);
+			PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, targetItem, 0, destinationSlot), true);
 		}
 	}
 
@@ -686,7 +688,6 @@ public class MinionService {
 		levelNewMinion = minionTemplate.getLevel();
 		name = minionTemplate.getName();
 		
-		// Логируес код в консоль
 		log.info("Creating new minion with ID: " + minionId + ", Name: " + name + ", Grade: " + grade + ", Level: " + levelNewMinion);
 		MinionCommonData addNewMinion = player.getMinionList().addNewMinion(player, minionId, name, grade, levelNewMinion, averageGrowthPoint);
 		if (addNewMinion == null) {
@@ -702,7 +703,6 @@ public class MinionService {
 		player.getMinionList().updateMinionsList();
 	}
 
-	// Нужно перепроверить, чтобы тут были все миньоны
 	private static int minionId(int rnd) {
 		if (rnd <= 35) {
 			return 980010; // Kerubar D (3.6%)

@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,8 +15,10 @@
  */
 package com.aionemu.gameserver.questEngine.handlers.template;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.aionemu.gameserver.model.gameobjects.player.Player;
 import com.aionemu.gameserver.questEngine.handlers.QuestHandler;
@@ -35,7 +36,8 @@ public class SkillUse extends QuestHandler {
 	private final int startNpc;
 	private final int endNpc;
 	private final FastMap<List<Integer>, QuestSkillData> qsd;
-
+	private final Map<String, Long> lastSkillUseCache = new HashMap<String, Long>();
+	
 	public SkillUse(int questId, int startNpc, int endNpc, FastMap<List<Integer>, QuestSkillData> qsd) {
 		super(questId);
 		this.questId = questId;
@@ -100,7 +102,28 @@ public class SkillUse extends QuestHandler {
 	public boolean onUseSkillEvent(QuestEnv env, int skillId) {
 		Player player = env.getPlayer();
 		QuestState qs = player.getQuestStateList().getQuestState(questId);
+		
 		if (qs != null && qs.getStatus() == QuestStatus.START) {
+			String cacheKey = player.getObjectId() + "_" + skillId + "_" + questId;
+			Long lastUsed = lastSkillUseCache.get(cacheKey);
+			long currentTime = System.currentTimeMillis();
+			
+			if (lastUsed != null && (currentTime - lastUsed) < 500) {
+				return false;
+			}
+			
+			lastSkillUseCache.put(cacheKey, currentTime);
+			
+			if (lastSkillUseCache.size() > 1000) {
+				Iterator<Map.Entry<String, Long>> iterator = lastSkillUseCache.entrySet().iterator();
+				long cleanupTime = currentTime - 30000;
+				while (iterator.hasNext()) {
+					if (iterator.next().getValue() < cleanupTime) {
+						iterator.remove();
+					}
+				}
+			}
+			
 			for (QuestSkillData qd : qsd.values()) {
 				if (qd.getSkillIds().contains(skillId)) {
 					int endVar = qd.getEndVar();

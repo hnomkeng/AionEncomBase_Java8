@@ -1003,10 +1003,9 @@
 				    <spot h="17" z="249.09445" y="1123.4645" x="2834.4888"/>
 				    <spot h="44" z="219.25" y="1369.0989" x="2955.411"/>
 				</spawn> -->
-				<!-- Heavy Tetran
-				<Ancient Weapon>
-				A weapon made with Elyos technology using loot from the Beritra Invasion.
-				It is being used during the Norsvold tower fragment retrieval mission -->
+				<!-- Kenovikan
+				A weapon made with Asmodian technology using loot from the Beritra Invasion.
+				It is being used for the Iluma tower fragment retrieval mission -->
 				<spawn npc_id="246460">
 					<spot x="2722.799" y="1424.293" z="227.375" h="53"/>
 				</spawn>

@@ -33,8 +33,8 @@ public class _25590Collating_The_Reports extends QuestHandler {
 	
 	@Override
 	public void register() {
-		qe.registerQuestNpc(806114).addOnQuestStart(questId); //Reinhard.
-		qe.registerQuestNpc(806114).addOnTalkEvent(questId); //Reinhard.
+		qe.registerQuestNpc(806116).addOnQuestStart(questId); //Reinhard.
+		qe.registerQuestNpc(806116).addOnTalkEvent(questId); //Reinhard.
 		qe.registerQuestNpc(806228).addOnTalkEvent(questId); //Bastok.
 		qe.registerQuestNpc(806229).addOnTalkEvent(questId); //Duisys.
 		qe.registerQuestNpc(806230).addOnTalkEvent(questId); //Sieden.
@@ -49,7 +49,7 @@ public class _25590Collating_The_Reports extends QuestHandler {
 		if (env.getVisibleObject() instanceof Npc) {
 			targetId = ((Npc) env.getVisibleObject()).getNpcId();
 		} if (qs == null || qs.getStatus() == QuestStatus.NONE || qs.canRepeat()) {
-			if (targetId == 806114) { //Ilisia.
+			if (targetId == 806116) { //Reinhard.
 				if (env.getDialog() == QuestDialog.START_DIALOG) {
 					return sendQuestDialog(env, 4762);
 				} else {

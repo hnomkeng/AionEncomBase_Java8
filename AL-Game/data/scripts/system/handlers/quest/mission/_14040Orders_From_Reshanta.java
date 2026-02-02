@@ -26,10 +26,9 @@ import com.aionemu.gameserver.world.zone.ZoneName;
 /** Author Ghostfur & Unknown (Aion-Unique)
 /****/
 
-public class _14040Orders_From_Reshanta extends QuestHandler
-{
+public class _14040Orders_From_Reshanta extends QuestHandler {
+
     private final static int questId = 14040;
-	
     public _14040Orders_From_Reshanta() {
         super(questId);
     }

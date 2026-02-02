@@ -26,10 +26,8 @@ import com.aionemu.gameserver.world.zone.ZoneName;
 /** Author Ghostfur & Unknown (Aion-Unique)
 /****/
 
-public class _1100Kalios_Call extends QuestHandler
-{
+public class _1100Kalios_Call extends QuestHandler {
 	private final static int questId = 1100;
-	
 	public _1100Kalios_Call() {
 		super(questId);
 	}
@@ -53,11 +51,11 @@ public class _1100Kalios_Call extends QuestHandler
 			return false;
 		if (qs.getStatus() == QuestStatus.START) {
 			if (env.getDialog() == QuestDialog.START_DIALOG) {
+				return sendQuestDialog(env, 1011);
+			} else if (env.getDialogId() == 1009) {
 				qs.setStatus(QuestStatus.REWARD);
 				updateQuestStatus(env);
-				return sendQuestDialog(env, 1011);
-			} else {
-				return sendQuestStartDialog(env);
+                return sendQuestEndDialog(env);
 			}
 		} else if (qs.getStatus() == QuestStatus.REWARD) {
 			if (env.getDialogId() == 23) {

@@ -56,7 +56,7 @@ public class _24040Votans_Orders extends QuestHandler {
 			} else if (env.getDialogId() == 1009) {
 				qs.setStatus(QuestStatus.REWARD);
 				updateQuestStatus(env);
-				return sendQuestDialog(env, 5);
+				return sendQuestEndDialog(env);
 			}
 			return false;
 		} else if (qs.getStatus() == QuestStatus.REWARD) {

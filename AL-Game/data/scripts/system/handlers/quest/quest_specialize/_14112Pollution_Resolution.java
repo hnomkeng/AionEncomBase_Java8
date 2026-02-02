@@ -38,6 +38,8 @@ public class _14112Pollution_Resolution extends QuestHandler {
 		qe.registerQuestNpc(203148).addOnTalkEvent(questId);
 		qe.registerQuestNpc(203195).addOnTalkEvent(questId);
 		qe.registerQuestNpc(210318).addOnKillEvent(questId);
+		qe.registerOnDie(questId);
+        qe.registerOnLogOut(questId);
 	}
 	
 	@Override
@@ -121,6 +123,32 @@ public class _14112Pollution_Resolution extends QuestHandler {
 					updateQuestStatus(env);
 				}
             } 
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onDieEvent(QuestEnv env) {
+		Player player = env.getPlayer();
+		QuestState qs = player.getQuestStateList().getQuestState(questId);
+		if (qs == null || qs.getStatus() == QuestStatus.START) {
+			if (qs.getQuestVarById(0) == 1) {
+				qs.setQuestVarById(0, 0);
+				updateQuestStatus(env);
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean onLogOutEvent(QuestEnv env) {
+		Player player = env.getPlayer();
+		QuestState qs = player.getQuestStateList().getQuestState(questId);
+		if (qs == null || qs.getStatus() == QuestStatus.START) {
+			if (qs.getQuestVarById(0) == 1) {
+				qs.setQuestVarById(0, 0);
+				updateQuestStatus(env);
+			}
 		}
 		return false;
 	}

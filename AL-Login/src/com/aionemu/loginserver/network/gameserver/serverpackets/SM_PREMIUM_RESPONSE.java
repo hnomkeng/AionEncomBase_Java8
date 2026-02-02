@@ -15,7 +15,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package com.aionemu.loginserver.network.gameserver.serverpackets;
 
 import com.aionemu.loginserver.network.gameserver.GsConnection;
@@ -29,11 +28,13 @@ public class SM_PREMIUM_RESPONSE extends GsServerPacket {
     private int requestId;
     private int result;
     private long points;
+    private long luna;
 
-    public SM_PREMIUM_RESPONSE(int requestId, int result, long points) {
+    public SM_PREMIUM_RESPONSE(int requestId, int result, long points, long luna) {
         this.requestId = requestId;
         this.result = result;
         this.points = points;
+        this.luna = luna;
     }
 
     @Override
@@ -42,5 +43,6 @@ public class SM_PREMIUM_RESPONSE extends GsServerPacket {
         writeD(requestId);
         writeD(result);
         writeQ(points);
+        writeQ(luna);
     }
 }

@@ -37,9 +37,8 @@ public class MentorMonsterHunt extends MonsterHunt {
 	private int menteMaxLevel;
 	private QuestTemplate qt;
 
-	public MentorMonsterHunt(int questId, List<Integer> startNpcIds, List<Integer> endNpcIds,
-			FastMap<Monster, Set<Integer>> monsters, int menteMinLevel, int menteMaxLevel) {
-		super(questId, startNpcIds, endNpcIds, monsters, 0, 0, null, 0);
+	public MentorMonsterHunt(int questId, List<Integer> startNpcIds, List<Integer> endNpcIds, FastMap<Monster, Set<Integer>> monsters, int menteMinLevel, int menteMaxLevel) {
+        super(questId, startNpcIds, endNpcIds, monsters, 0, 0, null, 0, false);
 		this.menteMinLevel = menteMinLevel;
 		this.menteMaxLevel = menteMaxLevel;
 		this.qt = DataManager.QUEST_DATA.getQuestById(questId);
@@ -55,8 +54,7 @@ public class MentorMonsterHunt extends MonsterHunt {
 				if (player.isMentor()) {
 					PlayerGroup group = player.getPlayerGroup2();
 					for (Player member : group.getMembers()) {
-						if (member.getLevel() >= menteMinLevel && member.getLevel() <= menteMaxLevel
-								&& MathUtil.getDistance(player, member) < GroupConfig.GROUP_MAX_DISTANCE) {
+						if (member.getLevel() >= menteMinLevel && member.getLevel() <= menteMaxLevel && MathUtil.getDistance(player, member) < GroupConfig.GROUP_MAX_DISTANCE) {
 							return super.onKillEvent(env);
 						}
 					}
@@ -66,8 +64,7 @@ public class MentorMonsterHunt extends MonsterHunt {
 				if (player.isInGroup2()) {
 					PlayerGroup group = player.getPlayerGroup2();
 					for (Player member : group.getMembers()) {
-						if (member.isMentor()
-								&& MathUtil.getDistance(player, member) < GroupConfig.GROUP_MAX_DISTANCE) {
+						if (member.isMentor() && MathUtil.getDistance(player, member) < GroupConfig.GROUP_MAX_DISTANCE) {
 							return super.onKillEvent(env);
 						}
 					}

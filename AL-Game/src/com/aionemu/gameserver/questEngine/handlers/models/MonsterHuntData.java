@@ -57,14 +57,16 @@ public class MonsterHuntData extends XMLQuest {
 	@XmlAttribute(name = "invasion_world")
 	protected int invasionWorld;
 
+    @XmlAttribute(name = "reward")
+    protected boolean reward = false;
+
 	@Override
 	public void register(QuestEngine questEngine) {
 		FastMap<Monster, Set<Integer>> monsterNpcs = new FastMap<Monster, Set<Integer>>();
 		for (Monster m : monster) {
 			monsterNpcs.put(m, new HashSet<Integer>(m.getNpcIds()));
 		}
-		MonsterHunt template = new MonsterHunt(id, startNpcIds, endNpcIds, monsterNpcs, startDialog, endDialog,
-				aggroNpcs, invasionWorld);
+		MonsterHunt template = new MonsterHunt(id, startNpcIds, endNpcIds, monsterNpcs, startDialog, endDialog, aggroNpcs, invasionWorld, reward);
 		questEngine.addQuestHandler(template);
 	}
 }

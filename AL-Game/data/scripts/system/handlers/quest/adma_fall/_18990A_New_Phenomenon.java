@@ -79,35 +79,41 @@ public class _18990A_New_Phenomenon extends QuestHandler {
         return false;
     }
 	
-	@Override
+    @Override
     public boolean onKillEvent(QuestEnv env) {
-        Player player = env.getPlayer();
-        QuestState qs = player.getQuestStateList().getQuestState(questId);
-        if (qs == null) {
-            return false;
-        }
-        int targetId = env.getTargetId();
-        if (qs.getStatus() != QuestStatus.START) {
-            return false;
-        }
-        int var = qs.getQuestVarById(0);
-        if (var == 1) {
-			if (targetId == 220417) { //악령�?� 저주를 받�?� 지투른.
-				qs.setQuestVarById(1, 1);
-			} else if (targetId == 220418) { //악령�?� 저주를 받�?� 카르미웬.
-				qs.setQuestVarById(2, 1);
-			}
-			updateQuestStatus(env);
-			if (qs.getQuestVarById(1) == 1 && qs.getQuestVarById(2) == 1) {
-				changeQuestStep(env, 1, 2, false);
-			}
-		} else if (var == 2) {
-            if (targetId == 220427) { //아티팩트를 지배하는 악령.
-                qs.setStatus(QuestStatus.REWARD);
-				changeQuestStep(env, 2, 3, false);
-				updateQuestStatus(env);
-            }
-        }
+    Player player = env.getPlayer();
+    QuestState qs = player.getQuestStateList().getQuestState(questId);
+    if (qs == null || qs.getStatus() != QuestStatus.START) {
         return false;
+    }
+    
+    int targetId = env.getTargetId();
+    int var = qs.getQuestVarById(0);
+    
+    if (var == 1) {
+        if (targetId == 220417) {
+            qs.setQuestVarById(1, 1);
+            updateQuestStatus(env);
+        } else if (targetId == 220418) {
+            qs.setQuestVarById(2, 1);
+            updateQuestStatus(env);
+        }
+        
+        if (qs.getQuestVarById(1) == 1 && qs.getQuestVarById(2) == 1) {
+            qs.setQuestVarById(1, 0);
+            qs.setQuestVarById(2, 0);
+            qs.setQuestVarById(0, 2);
+            updateQuestStatus(env);
+            return true;
+        }
+    } else if (var == 2) {
+        if (targetId == 220427) {
+            qs.setQuestVarById(0, 3);
+            qs.setStatus(QuestStatus.REWARD);
+            updateQuestStatus(env);
+            return true;
+        }
+    }
+    return false;
     }
 }

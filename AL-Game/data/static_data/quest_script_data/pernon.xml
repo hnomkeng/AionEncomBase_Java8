@@ -4,21 +4,6 @@
     Quest Pernon 3.0
 	Make By (Encom)
  -->
-	<!-- 28800 [Housing] Give My Regards To Pernon handled by script (Asmodians Only) -->
-	<!-- 28802 [Housing] Be It Ever So Humble handled by script (Asmodians Only) -->
-	<!-- 28805 Something Old, Something New handled by script (Asmodians Only) -->
-	<!-- 28806 Wilting Flowers, Falling Tears handled by script (Asmodians Only) -->
-	<!-- 28807 Blessings Of A Green Thumb handled by script (Asmodians Only) -->
-	<!-- 28808 Open, Says Me! handled by script (Asmodians Only) -->
-	<!-- 28809 First Class Or Coach? handled by script (Asmodians Only) -->
-	<!-- 28821 [Daily] Your Butler's Gift handled by script (Asmodians Only) -->
-	<!-- 28826 [Daily] Free To A Good Home... handled by script (Asmodians Only) -->
-	<!-- 28828 [Housing] The Many Facets Of Friendship handled by script (Asmodians Only) -->
-	<!-- 28830 [Housing] Interior Decorator handled by script (Asmodians Only) -->
-	<!-- 28832 [Housing] Taking The Tour handled by script (Asmodians Only) -->
-	<!-- 28837 [Daily] Sprout Of Joy handled by script (Asmodians Only) -->
-	<!-- 28847 A Home That's Your Own handled by script (Asmodians Only) -->
-	
 	<!-- [Housing] Moving Up In The World (Asmodians Only) -->
 	<report_to id="28801" start_npc_ids="830085" end_npc_ids="830102"/>
 	<!-- Going Twice... (Asmodians Only) -->
@@ -75,8 +60,6 @@
 	<item_collecting id="28844" start_npc_ids="830394"/>
 	<!-- A Child's Direction (Asmodians Only) -->
 	<report_to id="28846" start_npc_ids="830466" end_npc_ids="798457"/>
-	<!-- [Weekly] A Room For The Guestbloom (Asmodians Only) -->
-	<item_collecting id="28848" start_npc_ids="830532"/>
 	<!-- [Relic Bundle Reward] Ancient Goblet (Asmodians Only) -->
 	<relic_rewards id="28849" start_npc_ids="831383" relic_var1="186000058" relic_var2="186000057" relic_var3="186000056" relic_var4="186000055" relic_count="10"/>
 	<!-- [Relic Bundle Reward] Ancient Crown (Asmodians Only) -->

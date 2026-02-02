@@ -4,23 +4,6 @@
     Quest Oriel 3.0
 	Make By (Encom)
  -->
-	<!-- 18800 [Housing] The Living Is Easy handled by script (Elyos Only) -->
-	<!-- 18802 [Housing] And A Home For Every Daeva handled by script (Elyos Only) -->
-	<!-- 18805 Going Thrifting handled by script (Elyos Only) -->
-	<!-- 18806 No Accounting For Taste handled by script (Elyos Only) -->
-	<!-- 18807 Blessed Be Thy Hame handled by script (Elyos Only) -->
-	<!-- 18808 Foolproof Packaging handled by script (Elyos Only) -->
-	<!-- 18809 Daeva On The Ride handled by script (Elyos Only) -->
-	<!-- 18821 [Daily] Almost Forgot My Blessings handled by script (Elyos Only) -->
-	<!-- 18826 [Daily] Today's Find handled by script (Elyos Only) -->
-	<!-- 18828 [Housing] User Friendly ? handled by script (Elyos Only) -->
-	<!-- 18830 [Housing] Moving In handled by script (Elyos Only) -->
-	<!-- 18832 [Housing] Imagining A Quiet Life handled by script (Elyos Only) -->
-	<!-- 18833 [Daily] Leafy Cutting handled by script (Elyos Only) -->
-	<!-- 18835 [Daily] Stem Cutting handled by script (Elyos Only) -->
-	<!-- 18837 [Daily] Eye Cutting handled by script (Elyos Only) -->
-	<!-- 18847 Housewarming handled by script (Elyos Only) -->
-	
 	<!-- [Housing] Heart Of Rock (Elyos Only) -->
 	<report_to id="18801" start_npc_ids="830001" end_npc_ids="830005"/>
 	<!-- Taltaros' Proxy (Elyos Only) -->
@@ -75,8 +58,6 @@
 	<item_collecting id="18844" start_npc_ids="830192"/>
 	<!-- Free Gift Just For Visiting ! (Elyos Only) -->
 	<report_to id="18846" start_npc_ids="830205" end_npc_ids="798455"/>
-	<!-- [Weekly] How To Garden Aggressively (Elyos Only) -->
-	<item_collecting id="18848" start_npc_ids="830365"/>
 	<!-- [Relic Bundle Reward] Ancient Goblet (Elyos Only) -->
 	<relic_rewards id="18849" start_npc_ids="831382" relic_var1="186000058" relic_var2="186000057" relic_var3="186000056" relic_var4="186000055" relic_count="10"/>
 	<!-- [Relic Bundle Reward] Ancient Crown (Elyos Only) -->

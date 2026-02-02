@@ -28588,21 +28588,22 @@
       <selectable_reward_item item_id="121001396" count="1" />
       <selectable_reward_item item_id="121001397" count="1" />
     </rewards>
-    <quest_drop npc_id="210158" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210165" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210166" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210167" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210170" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210171" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210175" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210176" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210177" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210183" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210184" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210354" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210355" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210692" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210693" item_id="182215315" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="210712" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210158" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210165" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210166" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210167" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210170" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210171" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210175" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210176" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210177" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210183" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210184" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210354" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210355" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210692" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210693" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
     <class_permitted>GLADIATOR TEMPLAR ASSASSIN RANGER SORCERER SPIRIT_MASTER CHANTER CLERIC GUNSLINGER SONGWEAVER TECHNIST AETHERTECH</class_permitted>
   </quest>
   <quest id="14015" name="Not Blinded by Vengeance" nameId="1129877" minlevel_permitted="20" max_repeat_count="1" cannot_share="true" cannot_giveup="true" race_permitted="ELYOS" category="MISSION">
@@ -31154,6 +31155,30 @@
     </rewards>
     <start_conditions>
       <finished quest_id="15550" />
+    </start_conditions>
+  </quest>
+  <quest id="15590" name="[Daily] Report on the Fragments of the Tower of Eternity" nameId="1802146" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ELYOS" category="SEEN_MARKER">
+    <rewards exp="39787200">
+      <reward_item item_id="186000236" count="5"/>
+      <reward_item item_id="186000492" count="1"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="15550"/>
+    </start_conditions>
+    <quest_work_items>
+      <quest_work_item item_id="182215978" count="1"/>
+      <quest_work_item item_id="182215979" count="1"/>
+      <quest_work_item item_id="182215980" count="1"/>
+      <quest_work_item item_id="182215981" count="1"/>
+    </quest_work_items>
+  </quest>
+  <quest id="15595" name="[Spy/Daily] Attack on Nosra" nameId="1802150" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ELYOS" category="PUBLIC">
+    <rewards exp="45755280" gp="6" expBoost="50">
+      <reward_item item_id="186000414" count="2"/>
+      <reward_item item_id="188100391" count="100"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="15550"/>
     </start_conditions>
   </quest>
   <quest id="15596" name="Give No Quarter" nameId="1802151" minlevel_permitted="66" max_repeat_count="255" race_permitted="ELYOS" category="PUBLIC" repeat_cycle="ALL">
@@ -41476,6 +41501,30 @@
     </rewards>
     <start_conditions>
       <finished quest_id="25550" />
+    </start_conditions>
+  </quest>
+  <quest id="25590" name="[Daily] Report on the Fragments of the Tower of Eternity" nameId="1802217" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ASMODIANS" category="SEEN_MARKER">
+    <rewards exp="39787200">
+      <reward_item item_id="186000236" count="5"/>
+      <reward_item item_id="186000492" count="1"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="25550"/>
+    </start_conditions>
+    <quest_work_items>
+      <quest_work_item item_id="182215982" count="1"/>
+      <quest_work_item item_id="182215983" count="1"/>
+      <quest_work_item item_id="182215984" count="1"/>
+      <quest_work_item item_id="182215985" count="1"/>
+    </quest_work_items>
+  </quest>
+  <quest id="25595" name="[Spy/Daily] Attack on Esterra" nameId="1802221" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ASMODIANS" category="PUBLIC">
+    <rewards exp="45755280" gp="6" expBoost="50">
+      <reward_item item_id="186000414" count="2"/>
+      <reward_item item_id="188100391" count="100"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="25550"/>
     </start_conditions>
   </quest>
   <quest id="25596" name="[Urgent Order] Protect Norsvold" nameId="1802222" minlevel_permitted="66" max_repeat_count="255" race_permitted="ASMODIANS" category="PUBLIC" repeat_cycle="ALL">

@@ -86,11 +86,12 @@ public class _14014Turning_The_Ide extends QuestHandler {
                     }
                 } case 203147: { //Meteina.
                     switch (dialog) {
-                        case USE_OBJECT: {
+                        case START_DIALOG: {
                             if (var == 2) {
                                 return sendQuestDialog(env, 1693);
                             }
                         } case STEP_TO_3: {
+                            if (var == 2)
                             return defaultCloseDialog(env, 2, 3);
                         }
                     }

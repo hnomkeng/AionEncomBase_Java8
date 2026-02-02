@@ -33,7 +33,6 @@ public class _25545A_New_Comrade_For_A_Archdaeva extends QuestHandler {
 	public void register() {
         qe.registerQuestNpc(835515).addOnQuestStart(questId);
         qe.registerQuestNpc(835515).addOnTalkEvent(questId);
-		qe.registerQuestNpc(835515).addOnAtDistanceEvent(questId);
 	}
 	
 	@Override
@@ -46,10 +45,14 @@ public class _25545A_New_Comrade_For_A_Archdaeva extends QuestHandler {
                 switch (env.getDialog()) {
                     case START_DIALOG: {
                         return sendQuestDialog(env, 4762);
-					} case ACCEPT_QUEST:
-					case ACCEPT_QUEST_SIMPLE: {
+					} 
+                    case ACCEPT_QUEST_SIMPLE: {
+                    if (player.getInventory().getItemCountByItemId(190080011) == 0) {
+			              giveQuestItem(env, 190080011, 1);
+                        }
 						return sendQuestStartDialog(env);
-					} case REFUSE_QUEST_SIMPLE: {
+					} 
+                    case REFUSE_QUEST_SIMPLE: {
 				        return closeDialogWindow(env);
 					}
                 }
@@ -65,17 +68,6 @@ public class _25545A_New_Comrade_For_A_Archdaeva extends QuestHandler {
 					return sendQuestEndDialog(env);
 				}
 			}
-		}
-		return false;
-	}
-	
-	@Override
-	public boolean onAtDistanceEvent(QuestEnv env) {
-		final Player player = env.getPlayer();
-        final QuestState qs = player.getQuestStateList().getQuestState(questId);
-		if (qs == null || qs.getStatus() == QuestStatus.START) {
-			changeQuestStep(env, 0, 1, true);
-			return true;
 		}
 		return false;
 	}
