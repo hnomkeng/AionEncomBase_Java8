@@ -202,28 +202,29 @@ public class RateConfig {
 	public static float PREMIUM_BOOK_RATE;
 	@Property(key = "gameserver.rate.vip.book", defaultValue = "3")
 	public static float VIP_BOOK_RATE;
-    // 普通怪物的HP和Power倍率
-    @Property(key = "gameserver.rate.normal.mobs.hp", defaultValue = "1.0")
+
+    // Normal monsters HP and Power rate multipliers
+    @Property(key = "gameserver.rate.normal.mobs.rate.hp", defaultValue = "1.0")
     public static float NORMAL_MOBS_RATE_HP;
-    @Property(key = "gameserver.rate.normal.mobs.pw", defaultValue = "1.0")
+    @Property(key = "gameserver.rate.normal.mobs.rate.pw", defaultValue = "1.0")
     public static float NORMAL_MOBS_RATE_PW;
 
-    // 精英怪物的HP和Power倍率
-    @Property(key = "gameserver.rate.elite.mobs.hp", defaultValue = "1.0")
+    // Elite monsters HP and Power rate multipliers
+    @Property(key = "gameserver.rate.elite.mobs.rate.hp", defaultValue = "1.0")
     public static float ELITE_MOBS_RATE_HP;
-    @Property(key = "gameserver.rate.elite.mobs.pw", defaultValue = "1.0")
+    @Property(key = "gameserver.rate.elite.mobs.rate.pw", defaultValue = "1.0")
     public static float ELITE_MOBS_RATE_PW;
 
-    // 英雄怪物的HP和Power倍率
-    @Property(key = "gameserver.rate.hero.mobs.hp", defaultValue = "1.0")
+    // Hero monsters HP and Power rate multipliers
+    @Property(key = "gameserver.rate.hero.mobs.rate.hp", defaultValue = "1.0")
     public static float HERO_MOBS_RATE_HP;
-    @Property(key = "gameserver.rate.hero.mobs.pw", defaultValue = "1.0")
+    @Property(key = "gameserver.rate.hero.mobs.rate.pw", defaultValue = "1.0")
     public static float HERO_MOBS_RATE_PW;
 
-    // 传说怪物的HP和Power倍率
-    @Property(key = "gameserver.rate.legendary.mobs.hp", defaultValue = "1.0")
+    // Legendary monsters HP and Power rate multipliers
+    @Property(key = "gameserver.rate.legendary.mobs.rate.hp", defaultValue = "1.0")
     public static float LEGENDARY_MOBS_RATE_HP;
-    @Property(key = "gameserver.rate.legendary.mobs.pw", defaultValue = "1.0")
+    @Property(key = "gameserver.rate.legendary.mobs.rate.pw", defaultValue = "1.0")
     public static float LEGENDARY_MOBS_RATE_PW;
 
 	// Damage Multiplier

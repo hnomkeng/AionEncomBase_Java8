@@ -83,4 +83,16 @@ public class NpcStatsTemplate extends StatsTemplate {
 	public long getMaxXp() {
 		return maxXp;
 	}
+
+    public void setPdef(int pdef) {
+       this.pdef = pdef;
+    }
+
+    public void setMdef(int mdef) {
+       this.mdef = mdef;
+    }
+
+    public void setMresist(int mresist) {
+       this.mresist = mresist;
+    }
 }
