@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,6 +15,7 @@
  */
 package com.aionemu.gameserver.services.events;
 
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +34,7 @@ import com.aionemu.gameserver.utils.PacketSendUtility;
  * @author Rinzler (Encom)
  */
 public class BoostEventService implements StatOwner {
+
 	private static BoostEventBonus bonus;
 
 	private static final Logger log = LoggerFactory.getLogger(BoostEventService.class);
@@ -50,16 +51,17 @@ public class BoostEventService implements StatOwner {
 	public void sendPacket(Player player) {
 		Map<Integer, BoostEvents> boost = getCurrentBoost();
 		for (BoostEvents be : boost.values()) {
-			long start = be.getStartDate().getMillis() / 1000;
-			long end = be.getEndDate().getMillis() / 1000;
+			long start = be.getStartDate().toInstant().toEpochMilli() / 1000;
+			long end = be.getEndDate().toInstant().toEpochMilli() / 1000;
 			PacketSendUtility.sendPacket(player, new SM_BOOST_EVENTS(be.getBuffId(), be.getBuffValue(), start, end));
 		}
 	}
 
 	public Map<Integer, BoostEvents> getCurrentBoost() {
 		Map<Integer, BoostEvents> boost = new HashMap<Integer, BoostEvents>();
+		ZonedDateTime now = ZonedDateTime.now();
 		for (BoostEvents be : data.values()) {
-			if (be.getStartDate().isBeforeNow() && be.getEndDate().isAfterNow()) {
+			if (be.getStartDate().isBefore(now) && be.getEndDate().isAfter(now)) {
 				boost.put(be.getId(), be);
 			}
 		}

@@ -111,10 +111,6 @@
 		<spot x="2300.054" y="2650.945" z="134.5981" h="56" />
 	</spawn>
 	<!-- Indratu Summoner -->
-	<spawn npc_id="235498" respawn_time="295">
-		<spot x="2116.191" y="2482.812" z="139.7076" h="13" />
-	</spawn>
-	<!-- Indratu Summoner -->
 	<spawn npc_id="235499" respawn_time="295">
 		<spot x="2326.508" y="2674.576" z="133.8627" h="118" />
 	</spawn>

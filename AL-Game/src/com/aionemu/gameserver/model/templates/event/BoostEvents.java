@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,14 +15,14 @@
  */
 package com.aionemu.gameserver.model.templates.event;
 
+import java.time.ZonedDateTime;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.joda.time.DateTime;
 
 import com.aionemu.gameserver.utils.gametime.DateTimeUtil;
 
@@ -34,6 +33,7 @@ import com.aionemu.gameserver.utils.gametime.DateTimeUtil;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BoostEvents")
 public class BoostEvents {
+
 	@XmlAttribute(name = "id", required = true)
 	protected int id;
 
@@ -70,16 +70,17 @@ public class BoostEvents {
 		return buffValue;
 	}
 
-	public DateTime getStartDate() {
-		return DateTimeUtil.getDateTime(startDate.toGregorianCalendar());
+	public ZonedDateTime getStartDate() {
+		return DateTimeUtil.fromCalendar(startDate.toGregorianCalendar());
 	}
 
-	public DateTime getEndDate() {
-		return DateTimeUtil.getDateTime(endDate.toGregorianCalendar());
+	public ZonedDateTime getEndDate() {
+		return DateTimeUtil.fromCalendar(endDate.toGregorianCalendar());
 	}
 
 	public boolean isActive() {
-		return getStartDate().isBeforeNow() && getEndDate().isAfterNow();
+		ZonedDateTime now = DateTimeUtil.now();
+		return getStartDate().isBefore(now) && getEndDate().isAfter(now);
 	}
 
 	public boolean isExpired() {

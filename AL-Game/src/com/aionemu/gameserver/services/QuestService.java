@@ -16,6 +16,7 @@
 package com.aionemu.gameserver.services;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,6 +96,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 public final class QuestService {
+
 	static QuestsData questsData = DataManager.QUEST_DATA;
 	private static final Logger log = LoggerFactory.getLogger(QuestService.class);
 	private static Multimap<Integer, QuestDrop> questDrop = ArrayListMultimap.create();
@@ -404,8 +405,9 @@ public final class QuestService {
 
 	private static Timestamp countNextRepeatTime(Player player, QuestTemplate template) {
 		int questCooltime = template.getQuestCoolTime();
-		DateTime now = DateTime.now();
-		DateTime repeatDate = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 9, 0, 0);
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime repeatDate = now.withHour(9).withMinute(0).withSecond(0).withNano(0);
+
 		if (template.isDaily()) {
 			if (now.isAfter(repeatDate)) {
 				repeatDate = repeatDate.plusHours(24);
@@ -414,28 +416,29 @@ public final class QuestService {
 		} else if (template.getQuestCoolTime() > 0) {
 			repeatDate = repeatDate.plusSeconds(template.getQuestCoolTime());
 			// This quest can be re-attempted in %DURATIONDAY0s.
-			PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1402676, +questCooltime));
+			PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1402676, questCooltime));
 		} else {
 			int daysToAdd = 7;
 			int startDay = 7;
 			for (QuestRepeatCycle weekDay : template.getRepeatCycle()) {
-				int diff = weekDay.getDay() - repeatDate.getDayOfWeek();
+				int dayValue = weekDay.getDay();
+				int diff = dayValue - repeatDate.getDayOfWeek().getValue();
 				if (diff > 0 && diff < daysToAdd) {
 					daysToAdd = diff;
 				}
-				if (startDay > weekDay.getDay()) {
-					startDay = weekDay.getDay();
+				if (startDay > dayValue) {
+					startDay = dayValue;
 				}
 			}
 			if (startDay == daysToAdd) {
 				daysToAdd = 7;
 			} else if (daysToAdd == 7 && startDay < 7) {
-				daysToAdd = 7 - repeatDate.getDayOfWeek() + startDay;
+				daysToAdd = 7 - repeatDate.getDayOfWeek().getValue() + startDay;
 			}
 			repeatDate = repeatDate.plusDays(daysToAdd);
 			PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1400857, new DescriptionId(1800667), "9"));
 		}
-		return new Timestamp(repeatDate.getMillis());
+		return new Timestamp(repeatDate.toInstant().toEpochMilli());
 	}
 
 	public static boolean checkStartConditions(QuestEnv env, boolean warn) {
@@ -453,10 +456,11 @@ public final class QuestService {
 				return false;
 			}
 		}
-		int levelDiff = template.getMinlevelPermitted() - player.getLevel();
+        int levelDiff = template.getMinlevelPermitted() - player.getLevel();
         if (levelDiff > 0 && template.getMinlevelPermitted() != 999) {
-            if (warn) {
-                 PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_MIN_LEVEL(Integer.toString(template.getMinlevelPermitted())));
+            QuestState qs = player.getQuestStateList().getQuestState(env.getQuestId());
+            if (warn && qs.getStatus() == QuestStatus.NONE) {
+                  PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_MIN_LEVEL(Integer.toString(template.getMinlevelPermitted())));
             }
             return false;
         }

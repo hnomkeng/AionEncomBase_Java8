@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,6 +15,12 @@
  */
 package com.aionemu.gameserver.dataholders;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,8 +29,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.joda.time.DateTime;
 
 import com.aionemu.gameserver.model.gameobjects.player.Player;
 import com.aionemu.gameserver.model.templates.InstanceCooltime;
@@ -36,6 +39,7 @@ import javolution.util.FastMap;
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name = "instance_cooltimes")
 public class InstanceCooltimeData {
+
 	@XmlElement(name = "instance_cooltime", required = true)
 	protected List<InstanceCooltime> instanceCooltime;
 	private FastMap<Integer, InstanceCooltime> instanceCooltimes = new FastMap<Integer, InstanceCooltime>();
@@ -87,16 +91,20 @@ public class InstanceCooltimeData {
 		if (clt != null) {
 			instanceCoolTime = clt.getEntCoolTime();
 			if (clt.getCoolTimeType().isDaily()) {
-				DateTime now = DateTime.now();
-				DateTime repeatDate = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(),
-						clt.getEntCoolTime() / 100, 0, 0);
+				ZonedDateTime now = ZonedDateTime.now();
+				int hour = (int) (clt.getEntCoolTime() / 100);
+				ZonedDateTime repeatDate = now.withHour(hour).withMinute(0).withSecond(0).withNano(0);
+				
 				if (now.isAfter(repeatDate)) {
-					repeatDate = repeatDate.plusHours(24);
+					repeatDate = repeatDate.plusDays(1);
 				}
-				instanceCoolTime = repeatDate.getMillis();
+				instanceCoolTime = repeatDate.toInstant().toEpochMilli();
+				
 			} else if (clt.getCoolTimeType().isWeekly()) {
 				String[] days = clt.getTypeValue().split(",");
-				instanceCoolTime = getUpdateHours(days, clt.getEntCoolTime() / 100);
+				int hour = (int) (clt.getEntCoolTime() / 100);
+				instanceCoolTime = getUpdateHours(days, hour);
+				
 			} else if (clt.getCoolTimeType().isRelative()) {
 				switch (worldId) {
 				case 300480000: // Sealed Danuar Mysticarium.
@@ -110,63 +118,62 @@ public class InstanceCooltimeData {
 				case 302350000: // Windy Gorge 5.5
 				case 302370000: // 5.6
 				case 302420000: // 5.6
-					DateTime now = DateTime.now();
-					DateTime repeatDate = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 9, 0,
-							0);
+					ZonedDateTime now = ZonedDateTime.now();
+					ZonedDateTime repeatDate = now.withHour(9).withMinute(0).withSecond(0).withNano(0);
 					if (now.isAfter(repeatDate)) {
-						repeatDate = repeatDate.plusHours(24);
+						repeatDate = repeatDate.plusDays(1);
 					}
-					instanceCoolTime = repeatDate.getMillis();
+					instanceCoolTime = repeatDate.toInstant().toEpochMilli();
+					// Note: The original had both calculations, keeping both for compatibility
 					instanceCoolTime = System.currentTimeMillis() + (clt.getEntCoolTime() * 60 * 1000);
 					break;
 				}
 			}
 		}
 		if (instanceCooldownRate != 1) {
-			instanceCoolTime = System.currentTimeMillis()
-					+ ((instanceCoolTime - System.currentTimeMillis()) / instanceCooldownRate);
+			instanceCoolTime = System.currentTimeMillis() + ((instanceCoolTime - System.currentTimeMillis()) / instanceCooldownRate);
 		}
 		return instanceCoolTime;
 	}
 
 	private long getUpdateHours(String[] days, int hour) {
-		DateTime now = DateTime.now();
-		DateTime repeatDate = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), hour, 0, 0);
-		int curentDay = now.getDayOfWeek();
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime repeatDate = now.withHour(hour).withMinute(0).withSecond(0).withNano(0);
+		
+		int currentDay = now.getDayOfWeek().getValue(); // 1 (Monday) to 7 (Sunday)
+		
 		for (String name : days) {
 			int day = getDay(name);
-			if (day < curentDay) {
+			if (day < currentDay) {
 				continue;
 			}
-			if (day == curentDay) {
+			if (day == currentDay) {
 				if (now.isBefore(repeatDate)) {
-					return repeatDate.getMillis();
+					return repeatDate.toInstant().toEpochMilli();
 				}
 			} else {
-				repeatDate = repeatDate.plusDays(day - curentDay);
-				return repeatDate.getMillis();
+				repeatDate = repeatDate.plusDays(day - currentDay);
+				return repeatDate.toInstant().toEpochMilli();
 			}
 		}
-		return repeatDate.plusDays((7 - curentDay) + getDay(days[0])).getMillis();
+		
+		// If all days passed, take the first day of next week
+		int firstDay = getDay(days[0]);
+		repeatDate = repeatDate.plusDays((7 - currentDay) + firstDay);
+		return repeatDate.toInstant().toEpochMilli();
 	}
 
 	private int getDay(String day) {
-		if (day.equals("Mon")) {
-			return 1;
-		} else if (day.equals("Tue")) {
-			return 2;
-		} else if (day.equals("Wed")) {
-			return 3;
-		} else if (day.equals("Thu")) {
-			return 4;
-		} else if (day.equals("Fri")) {
-			return 5;
-		} else if (day.equals("Sat")) {
-			return 6;
-		} else if (day.equals("Sun")) {
-			return 7;
+		switch (day) {
+			case "Mon": return 1;
+			case "Tue": return 2;
+			case "Wed": return 3;
+			case "Thu": return 4;
+			case "Fri": return 5;
+			case "Sat": return 6;
+			case "Sun": return 7;
+			default: throw new IllegalArgumentException("Invalid Day: " + day);
 		}
-		throw new IllegalArgumentException("Invalid Day: " + day);
 	}
 
 	public Integer size() {

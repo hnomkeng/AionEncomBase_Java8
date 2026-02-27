@@ -40,7 +40,7 @@ public class _14054Kralling_To_Kralltumagna extends QuestHandler {
         qe.registerQuestNpc(800413).addOnTalkEvent(questId);
         qe.registerQuestNpc(802050).addOnTalkEvent(questId);
         //****//
-		int[] mobs = {214010, 214013, 214014, 214015, 214016, 214017, 214018, 214019, 214020, 214021, 214022, 214023, 214081, 214082, 214083, 214084, 214085, 214086, 214087, 214088, 702040, 233861, 235484, 235494, 235495, 235498, 235502};
+		int[] mobs = {214010, 214013, 214014, 214015, 235491, 235492, 214022, 214023, 214082, 214084, 702040, 233861, 235484, 235494, 235495, 235498, 235502};
 		//****//
         for (int mob: mobs) {
             qe.registerQuestNpc(mob).addOnKillEvent(questId);
@@ -150,14 +150,10 @@ public class _14054Kralling_To_Kralltumagna extends QuestHandler {
         int var = qs.getQuestVarById(0);
         if (var == 2) {
         if (targetId == 214010 || targetId == 214013 || targetId == 214014 ||
-		    targetId == 214015 || targetId == 214016 || targetId == 214017 ||
-			targetId == 214018 || targetId == 214019 || targetId == 214020 ||
-			targetId == 214021 || targetId == 214022 || targetId == 214023 ||
-			targetId == 214081 || targetId == 214082 || targetId == 214083 ||
-			targetId == 214084 || targetId == 214085 || targetId == 214086 ||
-			targetId == 214087 || targetId == 214088 || targetId == 235484 || 
-            targetId == 235494 || targetId == 235495 || targetId == 235498 || 
-            targetId == 235502) {
+		    targetId == 214015 || targetId == 235491 || targetId == 235492 ||
+			targetId == 235494 || targetId == 214022 || targetId == 214023 ||
+			targetId == 214082 || targetId == 214084 || targetId == 235484 || 
+            targetId == 235495 || targetId == 235498 || targetId == 235502) {
             switch (qs.getQuestVarById(1)) {
                 case 0:
                 case 1:

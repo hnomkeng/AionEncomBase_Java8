@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,53 +15,160 @@
  */
 package com.aionemu.gameserver.controllers;
 
+import com.aionemu.gameserver.controllers.movement.MinionMoveController;
+import com.aionemu.gameserver.model.TaskId;
 import com.aionemu.gameserver.model.gameobjects.Minion;
 import com.aionemu.gameserver.model.gameobjects.VisibleObject;
 import com.aionemu.gameserver.model.gameobjects.player.Player;
+import com.aionemu.gameserver.network.aion.serverpackets.SM_MOVE;
+import com.aionemu.gameserver.utils.MathUtil;
+import com.aionemu.gameserver.utils.PacketSendUtility;
+import com.aionemu.gameserver.utils.ThreadPoolManager;
+import com.aionemu.gameserver.world.World;
 
 /**
- * @author ATracer
+ * @author ATracer, Improved by Neon
  */
 public class MinionController extends VisibleObjectController<Minion> {
 
-	@Override
-	public void see(VisibleObject object) {
-	}
+    private static final int FOLLOW_RANGE = 5;
+    private static final int TELEPORT_RANGE = 25;
+    private static final int MOVE_UPDATE_RATE = 1000;
+    private static final int TELEPORT_CHECK_RATE = 2000;
+    private static final byte MOVE_MASK = (byte) 0x40;
 
-	@Override
-	public void notSee(VisibleObject object, boolean isOutOfRange) {
-	}
+    @Override
+    public void see(VisibleObject object) {
 
-	public static class MinionUpdateTask implements Runnable {
+    }
 
-		private final Player player;
-		private long startTime = 0;
+    @Override
+    public void notSee(VisibleObject object, boolean isOutOfRange) {
 
-		public MinionUpdateTask(Player player) {
-			this.player = player;
-		}
+    }
 
-		@Override
-		public void run() {
-			if (startTime == 0) {
-				startTime = System.currentTimeMillis();
-			}
+    public void startFollowing(Player player) {
+        Minion minion = getOwner();
+        if (minion == null || player == null) {
+            return;
+        }
 
-			try {
-				Minion minion = player.getMinion();
-				if (minion == null) {
-					throw new IllegalStateException("Minion is null");
-				}
+        player.getController().cancelTask(TaskId.MINION_UPDATE);
+        player.getController().cancelTask(TaskId.MINION_TELEPORT_CHECK);
 
-				int currentPoints = 0;
-				// boolean saved = false;
+        player.getController().addTask(TaskId.MINION_UPDATE, ThreadPoolManager.getInstance().scheduleAtFixedRate(new MinionFollowTask(player), 1000, MOVE_UPDATE_RATE));
 
-				if (currentPoints < 9000) {
-					// PacketSendUtility.sendPacket(player, new SM_MINIONS(minion, 4, 0));
-				}
-			} catch (Exception ex) {
-				// player.getController().cancelTask(TaskId.MINION_UPDATE);
-			}
-		}
-	}
+        player.getController().addTask(TaskId.MINION_TELEPORT_CHECK, ThreadPoolManager.getInstance().scheduleAtFixedRate(new MinionTeleportTask(player), 2000, TELEPORT_CHECK_RATE));
+    }
+
+    public void stopFollowing(Player player) {
+        if (player != null) {
+            player.getController().cancelTask(TaskId.MINION_UPDATE);
+            player.getController().cancelTask(TaskId.MINION_TELEPORT_CHECK);
+        }
+    }
+
+    public void teleportToPlayer(Player player) {
+        Minion minion = getOwner();
+        if (minion == null || player == null || !minion.isSpawned()) {
+            return;
+        }
+
+        float oldX = minion.getX();
+        float oldY = minion.getY();
+        float oldZ = minion.getZ();
+
+        World.getInstance().updatePosition(minion, player.getX(), player.getY(), player.getZ(), player.getHeading());
+        
+        PacketSendUtility.broadcastPacketAndReceive(minion, new SM_MOVE(minion.getObjectId(), oldX, oldY, oldZ, player.getX(), player.getY(), player.getZ(), player.getHeading(), (byte) 0));
+    }
+
+    public class MinionFollowTask implements Runnable {
+
+        private final Player player;
+
+        public MinionFollowTask(Player player) {
+            this.player = player;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Minion minion = getOwner();
+                if (minion == null || player == null || player.getMinion() == null) {
+                    return;
+                }
+
+                if (minion.getMaster() != player) {
+                    return;
+                }
+
+                if (!minion.isSpawned()) {
+                    return;
+                }
+
+                double distance = MathUtil.getDistance(minion, player);
+
+                if (distance > TELEPORT_RANGE) {
+                    teleportToPlayer(player);
+                    return;
+                }
+
+                MinionMoveController moveController = (MinionMoveController) minion.getMoveController();
+
+                if (distance > FOLLOW_RANGE) {
+                    moveController.setNewDirection(player.getX(), player.getY(), player.getZ(), player.getHeading());
+                    
+                    PacketSendUtility.broadcastPacket(minion, new SM_MOVE(minion.getObjectId(), minion.getX(), minion.getY(), minion.getZ(), player.getX(), player.getY(), player.getZ(), minion.getHeading(), MOVE_MASK));
+                } else {
+                    moveController.abortMove();
+                    PacketSendUtility.broadcastPacket(minion, new SM_MOVE(minion.getObjectId(), minion.getX(), minion.getY(), minion.getZ(), minion.getX(), minion.getY(), minion.getZ(), minion.getHeading(), (byte) 0));
+                }
+
+            } catch (Exception e) {
+                System.err.println("MinionFollowTask error: " + e.getMessage());
+            }
+        }
+    }
+
+    public class MinionTeleportTask implements Runnable {
+
+        private final Player player;
+
+        public MinionTeleportTask(Player player) {
+            this.player = player;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Minion minion = getOwner();
+                if (minion == null || player == null || player.getMinion() == null) {
+                    return;
+                }
+
+                if (!minion.isSpawned()) {
+                    return;
+                }
+
+                double distance = MathUtil.getDistance(minion, player);
+
+                if (distance > TELEPORT_RANGE) {
+                    teleportToPlayer(player);
+                    return;
+                }
+
+                if (distance > FOLLOW_RANGE * 2) {
+                    MinionMoveController moveController = (MinionMoveController) minion.getMoveController();
+                    
+                    moveController.setNewDirection(player.getX(), player.getY(), player.getZ(), player.getHeading());
+                    
+                    PacketSendUtility.broadcastPacket(minion, new SM_MOVE(minion.getObjectId(), minion.getX(), minion.getY(), minion.getZ(), player.getX(), player.getY(), player.getZ(), minion.getHeading(), MOVE_MASK));
+                }
+
+            } catch (Exception e) {
+                System.err.println("MinionTeleportTask error: " + e.getMessage());
+            }
+        }
+    }
 }

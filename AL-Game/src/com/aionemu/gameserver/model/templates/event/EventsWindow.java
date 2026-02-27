@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -17,6 +16,7 @@
 package com.aionemu.gameserver.model.templates.event;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,8 +24,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.joda.time.DateTime;
 
 import com.aionemu.gameserver.utils.gametime.DateTimeUtil;
 
@@ -83,12 +81,12 @@ public class EventsWindow {
 		return dailyMaxCount;
 	}
 
-	public DateTime getPeriodStart() {
-		return DateTimeUtil.getDateTime(pStart.toGregorianCalendar());
+	public ZonedDateTime getPeriodStart() {
+		return DateTimeUtil.fromCalendar(pStart.toGregorianCalendar());
 	}
 
-	public DateTime getPeriodEnd() {
-		return DateTimeUtil.getDateTime(pEnd.toGregorianCalendar());
+	public ZonedDateTime getPeriodEnd() {
+		return DateTimeUtil.fromCalendar(pEnd.toGregorianCalendar());
 	}
 
 	public int getRemainingTime() {

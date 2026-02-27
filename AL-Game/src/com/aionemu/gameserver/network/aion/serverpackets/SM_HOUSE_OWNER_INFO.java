@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -17,8 +16,8 @@
 package com.aionemu.gameserver.network.aion.serverpackets;
 
 import java.sql.Timestamp;
-
-import org.joda.time.DateTime;
+import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
 
 import com.aionemu.gameserver.model.gameobjects.player.Player;
 import com.aionemu.gameserver.model.gameobjects.player.PlayerHouseOwnerFlags;
@@ -31,6 +30,7 @@ import com.aionemu.gameserver.network.aion.AionServerPacket;
 import com.aionemu.gameserver.services.TownService;
 
 public class SM_HOUSE_OWNER_INFO extends AionServerPacket {
+
 	private Player player;
 	private House activeHouse;
 
@@ -70,7 +70,10 @@ public class SM_HOUSE_OWNER_INFO extends AionServerPacket {
 				writeC(0);
 			} else {
 				int weeks = (int) (Math.round(diff / MaintenanceTask.getInstance().getPeriod()));
-				if (DateTime.now().getDayOfWeek() != 7) {
+				
+				// Check if today is Sunday (day 7)
+				ZonedDateTime now = ZonedDateTime.now();
+				if (now.getDayOfWeek() != DayOfWeek.SUNDAY) {
 					weeks++;
 				}
 				writeC(weeks);

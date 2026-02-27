@@ -25,15 +25,17 @@ import com.aionemu.gameserver.questEngine.QuestEngine;
 import com.aionemu.gameserver.questEngine.model.QuestEnv;
 import com.aionemu.gameserver.skillengine.SkillEngine;
 import com.aionemu.gameserver.utils.PacketSendUtility;
-import org.joda.time.DateTime;
+
+import java.time.DayOfWeek;
+import java.time.ZonedDateTime;
 
 /****/
 /** Author (Encom)
 /****/
 
 @AIName("coderednurse")
-public class Code_Red_NurserAI2 extends GeneralNpcAI2
-{
+public class Code_Red_NurserAI2 extends GeneralNpcAI2 {
+
   	@Override
 	protected void handleDialogStart(Player player) {
         switch (getNpcId()) {
@@ -94,8 +96,9 @@ public class Code_Red_NurserAI2 extends GeneralNpcAI2
 	
 	@Override
 	protected void handleSpawned() {
-		DateTime now = DateTime.now();
-		int currentDay = now.getDayOfWeek();
+		ZonedDateTime now = ZonedDateTime.now();
+		int currentDay = now.getDayOfWeek().getValue(); // 1 (Monday) to 7 (Sunday)
+		
 		switch (getNpcId()) {
 			case 831435: //Jorpine.
 			case 831436: //Yennu.

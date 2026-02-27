@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,6 +15,7 @@
  */
 package com.aionemu.gameserver.model.templates.event;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,7 +31,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +53,7 @@ import com.aionemu.gameserver.world.knownlist.Visitor;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "EventTemplate")
 public class EventTemplate {
+
 	private static Logger log = LoggerFactory.getLogger(EventTemplate.class);
 
 	@XmlElement(name = "event_drops", required = false)
@@ -100,12 +100,12 @@ public class EventTemplate {
 		return eventDrops;
 	}
 
-	public DateTime getStartDate() {
-		return DateTimeUtil.getDateTime(startDate.toGregorianCalendar());
+	public ZonedDateTime getStartDate() {
+		return DateTimeUtil.fromCalendar(startDate.toGregorianCalendar());
 	}
 
-	public DateTime getEndDate() {
-		return DateTimeUtil.getDateTime(endDate.toGregorianCalendar());
+	public ZonedDateTime getEndDate() {
+		return DateTimeUtil.fromCalendar(endDate.toGregorianCalendar());
 	}
 
 	public List<Integer> getStartableQuests() {
@@ -123,7 +123,8 @@ public class EventTemplate {
 	}
 
 	public boolean isActive() {
-		return getStartDate().isBeforeNow() && getEndDate().isAfterNow();
+		ZonedDateTime now = DateTimeUtil.now();
+		return getStartDate().isBefore(now) && getEndDate().isAfter(now);
 	}
 
 	public boolean isExpired() {
@@ -152,14 +153,12 @@ public class EventTemplate {
 			int spawnCount = 0;
 			for (SpawnMap map : spawns.getTemplates()) {
 				DataManager.SPAWNS_DATA2.addNewSpawnMap(map);
-				Collection<Integer> instanceIds = World.getInstance().getWorldMap(map.getMapId())
-						.getAvailableInstanceIds();
+				Collection<Integer> instanceIds = World.getInstance().getWorldMap(map.getMapId()).getAvailableInstanceIds();
 				for (Integer instanceId : instanceIds) {
 					for (Spawn spawn : map.getSpawns()) {
 						spawn.setEventTemplate(this);
 						for (SpawnSpotTemplate spot : spawn.getSpawnSpotTemplates()) {
-							SpawnTemplate t = SpawnEngine.addNewSpawn(map.getMapId(), spawn.getNpcId(), spot.getX(),
-									spot.getY(), spot.getZ(), spot.getHeading(), spawn.getRespawnTime());
+							SpawnTemplate t = SpawnEngine.addNewSpawn(map.getMapId(), spawn.getNpcId(), spot.getX(), spot.getY(), spot.getZ(), spot.getHeading(), spawn.getRespawnTime());
 							t.setEventTemplate(this);
 							SpawnEngine.spawnObject(t, instanceId);
 							spawnCount++;
@@ -194,9 +193,7 @@ public class EventTemplate {
 						@Override
 						public void visit(Player player) {
 							int itemId = getInventoryDrop().getDropItem();
-							if (player.getCommonData().getLevel() >= getInventoryDrop().getStartLevel()
-									&& player.getCommonData().getLevel() <= getInventoryDrop().getEndLevel()
-									&& player.getItemMaxThisCount(itemId) < getInventoryDrop().getMaxCountOfDay()) {
+							if (player.getCommonData().getLevel() >= getInventoryDrop().getStartLevel() && player.getCommonData().getLevel() <= getInventoryDrop().getEndLevel() && player.getItemMaxThisCount(itemId) < getInventoryDrop().getMaxCountOfDay()) {
 								ItemService.dropItemToInventory(player, getInventoryDrop().getDropItem());
 								player.addItemMaxCountOfDay(itemId, player.getItemMaxThisCount(itemId) + 1);
 							}

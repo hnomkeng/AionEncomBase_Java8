@@ -74,8 +74,10 @@ public class _1693AreYouMyFather extends QuestHandler {
 								return sendQuestDialog(env, 1011);
 						}
 						case STEP_TO_1: {
+						    qs.setQuestVarById(0, 1);
+							updateQuestStatus(env);
 							TeleportService2.teleportTo(player, 110010000, 1323.37f, 1511.89f, 567.87f, (byte) 0);
-							return defaultCloseDialog(env, 0, 1);
+						    return closeDialogWindow(env);
 						}
 					}
 				}
@@ -92,14 +94,16 @@ public class _1693AreYouMyFather extends QuestHandler {
 					}
 				}
 				break;
-				case 203893: { 
+				case 203893: {
 					switch (env.getDialog()) {
 						case START_DIALOG: {
 							if (qs.getQuestVarById(0) == 2)
 								return sendQuestDialog(env, 1693);
 						}
 						case SELECT_REWARD: {
-							return defaultCloseDialog(env, 2, 2, true, true);
+                            qs.setStatus(QuestStatus.REWARD);
+				            updateQuestStatus(env);
+							return sendQuestEndDialog(env);
 						}
 					}
 				}
@@ -108,7 +112,7 @@ public class _1693AreYouMyFather extends QuestHandler {
 		else if (qs != null && qs.getStatus() == QuestStatus.REWARD) {
 			if (targetId == 203893) { 
 				if (env.getDialog() == QuestDialog.START_DIALOG)
-					return sendQuestDialog(env, 10002);
+					return sendQuestDialog(env, 1693);
 				else
 					return sendQuestEndDialog(env);
 			}

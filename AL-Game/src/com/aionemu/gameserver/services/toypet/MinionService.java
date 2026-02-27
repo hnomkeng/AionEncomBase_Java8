@@ -79,6 +79,21 @@ public class MinionService {
 		PacketSendUtility.sendPacket(player, new SM_MINIONS(9, 0));
 		PacketSendUtility.sendPacket(player, new SM_MINIONS(11, player.getMinionSkillPoints(), false));
 		PacketSendUtility.sendPacket(player, new SM_MINIONS(12));
+		
+		final int lastUsedMinionId = player.getMinionList().getLastUsed();
+		if (lastUsedMinionId != 0 && player.getMinion() == null) {
+			ThreadPoolManager.getInstance().schedule(new Runnable() {
+				@Override
+				public void run() {
+					if (player.isOnline() && player.getMinion() == null) {
+						MinionCommonData minionData = player.getMinionList().getMinion(lastUsedMinionId);
+						if (minionData != null) {
+							spawnMinion(player, lastUsedMinionId);
+						}
+					}
+				}
+			}, 3000);
+		}
 	}
 
 	public void addMinion(final Player player, final int itemObjId) {
@@ -168,26 +183,53 @@ public class MinionService {
 					}
 				} else {
 					switch (item.getItemTemplate().getTemplateId()) {
-						case 190089999:
-						case 190080005:
-						case 190080009: // Lesser Minion Contract
-						case 190080010:
-						case 190080011:
-							rnd = Rnd.get(0, 420);
-							while (rnd >= 106 && rnd <= 140) { // Kerubiel A
-								rnd = Rnd.get(0, 420);
+						case 190080007: // Larger Minion Contract
+						case 190080008: // Cute Minion Contract
+						case 190080013: // Cute Minion Contract
+							rnd = Rnd.get(0, 1000);
+							minionId = minionId(rnd);
+							break;
+
+						case 190080006: // Greater Minion Contract
+						case 190080012: // Special Minion Contract
+							rnd = Rnd.get(0, 800);
+							while (rnd == 106 ||    // Kerubiel A
+								   rnd == 212 ||    // Seiren A
+								   rnd == 318 ||    // Steel Rose A
+								   rnd == 424 ||    // Abija A
+								   rnd == 530 ||    // Hamerun A
+								   rnd == 636 ||    // Grendal A
+								   rnd == 742) {    // Sita A
+								rnd = Rnd.get(0, 800);
 							}
 							minionId = minionId(rnd);
 							break;
-						case 190080012: // Special Minion Contract
-						case 190080006: // Normal Minion Contract
-							rnd = Rnd.get(0, 1000);
+
+						case 190080005: // Lesser Minion Contract
+						case 190080009: // Lesser Minion Contract
+						case 190080010: // Lesser Minion Contract (Elyos)
+						case 190080011: // Lesser Minion Contract (Asmodian)
+						case 190089999: // Lesser Minion Contract
+							rnd = Rnd.get(0, 500);
+							while (rnd == 106 ||    // Kerubiel A
+								   rnd == 212 ||    // Seiren A
+								   rnd == 318 ||    // Steel Rose A
+								   rnd == 424 ||    // Abija A
+								   rnd == 530 ||    // Hamerun A
+								   rnd == 636 ||    // Grendal A
+								   rnd == 742 ||    // Sita A
+								   (rnd >= 71 && rnd <= 105) ||    // Kerubiel B
+								   (rnd >= 177 && rnd <= 211) ||   // Seiren B
+								   (rnd >= 283 && rnd <= 317) ||   // Steel Rose B
+								   (rnd >= 389 && rnd <= 423) ||   // Abija B
+								   (rnd >= 495 && rnd <= 529) ||   // Hamerun B
+								   (rnd >= 601 && rnd <= 635) ||   // Grendal B
+								   (rnd >= 707 && rnd <= 741)) {   // Sita B
+								rnd = Rnd.get(0, 500);
+							}
 							minionId = minionId(rnd);
 							break;
-						case 190080007: // Larger Minion Contract
-							rnd = Rnd.get(0, 1000);
-							minionId = minionId(rnd);
-							break;
+
 						default:
 							minionId = minions.get(new Random().nextInt(minions.size()));
 							break;
@@ -293,6 +335,9 @@ public class MinionService {
 		player.setMinion(minion);
 		player.getMinionList().setLastUsed(minionObjId);
 		minionbuff.apply(player, minionCommonData.getMinionId());
+		
+		((MinionController) minion.getController()).startFollowing(player);
+		
 		PacketSendUtility.broadcastPacketAndReceive(player, new SM_MINIONS(5, minionCommonData));
 	}
 
@@ -329,8 +374,9 @@ public class MinionService {
 		minionCommonData.setIsLooting(false);
 		minionCommonData.setIsBuffing(false);
 		
-		if (player.getMinion() != null) {
-			player.getMinion().getController().delete();
+		if (minion != null) {
+			((MinionController) minion.getController()).stopFollowing(player);
+			minion.getController().delete();
 			player.setMinion(null);
 		}
 		
@@ -657,7 +703,7 @@ public class MinionService {
 			return;
 		}
 		grade = player.getMinionList().getMinion(minionObjIds.get(0)).getMinionGrade();
-		log.debug("Grade of first minion: " + grade); // Проверяем значение
+		log.debug("Grade of first minion: " + grade);
 
 		int rnd = 0;
 		if (level > 0) {
@@ -746,63 +792,63 @@ public class MinionService {
 
 	private static int minionId(int rnd) {
 		if (rnd <= 35) {
-			return 980010; // Kerubar D (3.6%)
+			return 980010; // Kerubar D
 		} else if (rnd <= 70) {
-			return 980011; // Kerubian C (3.5%)
+			return 980011; // Kerubian C
 		} else if (rnd <= 105) {
-			return 980012; // Kerubiel B (3.5%)
-		} else if (rnd == 106) { // Arch Kerubiel A (0.1%)
-			return 980013;
+			return 980012; // Kerubiel B
+		} else if (rnd == 106) {
+			return 980013; // Arch Kerubiel A
 		} else if (rnd <= 141) {
-			return 980020; // Seiren D (3.5%)
+			return 980020; // Seiren D
 		} else if (rnd <= 176) {
-			return 980021; // Seiren C (3.5%)
+			return 980021; // Seiren C
 		} else if (rnd <= 211) {
-			return 980022; // Seiren B (3.5%)
-		} else if (rnd == 212) { // Seiren A (0.1%)
-			return 980023;
+			return 980022; // Seiren B
+		} else if (rnd == 212) {
+			return 980023; // Seiren A
 		} else if (rnd <= 247) {
-			return 980030; // Steel Rose D (3.5%)
+			return 980030; // Steel Rose D
 		} else if (rnd <= 282) {
-			return 980031; // Steel Rose C (3.5%)
+			return 980031; // Steel Rose C
 		} else if (rnd <= 317) {
-			return 980032; // Steel Rose B (3.5%)
-		} else if (rnd == 318) { // Steel Rose A (0.1%)
-			return 980033;
+			return 980032; // Steel Rose B
+		} else if (rnd == 318) {
+			return 980033; // Steel Rose A
 		} else if (rnd <= 353) {
-			return 980040; // Abija D (3.5%)
+			return 980040; // Abija D
 		} else if (rnd <= 388) {
-			return 980041; // Abija C (3.5%)
+			return 980041; // Abija C
 		} else if (rnd <= 423) {
-			return 980042; // Abija B (3.5%)
-		} else if (rnd == 424) { // Abija A (0.1%)
-			return 980043;
+			return 980042; // Abija B
+		} else if (rnd == 424) {
+			return 980043; // Abija A
 		} else if (rnd <= 459) {
-			return 980050; // Hamerun D (3.5%)
+			return 980050; // Hamerun D
 		} else if (rnd <= 494) {
-			return 980051; // Hamerun C (3.5%)
+			return 980051; // Hamerun C
 		} else if (rnd <= 529) {
-			return 980052; // Hamerun B (3.5%)
-		} else if (rnd == 530) { // Hamerun A (0.1%)
-			return 980053;
+			return 980052; // Hamerun B
+		} else if (rnd == 530) {
+			return 980053; // Hamerun A
 		} else if (rnd <= 565) {
-			return 980060; // Grendal D (3.5%)
+			return 980060; // Grendal D
 		} else if (rnd <= 600) {
-			return 980061; // Grendal C (3.5%)
+			return 980061; // Grendal C
 		} else if (rnd <= 635) {
-			return 980062; // Grendal B (3.5%)
-		} else if (rnd == 636) { // Grendal A (0.1%)
-			return 980063;
+			return 980062; // Grendal B
+		} else if (rnd == 636) {
+			return 980063; // Grendal A
 		} else if (rnd <= 671) {
-			return 980070; // Sita D (3.5%)
+			return 980070; // Sita D
 		} else if (rnd <= 706) {
-			return 980071; // Sita C (3.5%)
+			return 980071; // Sita C
 		} else if (rnd <= 741) {
-			return 980072; // Sita B (3.5%)
-		} else if (rnd == 742) { // Sita A (0.1%)
-			return 980073;
+			return 980072; // Sita B
+		} else if (rnd == 742) {
+			return 980073; // Sita A
 		} else {
-			return 980010; // Другое
+			return 980010;
 		}
 	}
 
@@ -811,7 +857,6 @@ public class MinionService {
 	}
 
 	private static class SingletonHolder {
-
 		protected static final MinionService instance = new MinionService();
 	}
 }
