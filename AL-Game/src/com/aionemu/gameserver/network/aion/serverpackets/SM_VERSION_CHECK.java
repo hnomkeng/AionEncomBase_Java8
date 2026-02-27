@@ -1,4 +1,5 @@
 /*
+
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -15,9 +16,10 @@
  */
 package com.aionemu.gameserver.network.aion.serverpackets;
 
+import java.util.Calendar;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.time.Instant;
 
 import com.aionemu.commons.network.IPRange;
 import com.aionemu.gameserver.configs.main.GSConfig;
@@ -28,7 +30,6 @@ import com.aionemu.gameserver.network.NetworkController;
 import com.aionemu.gameserver.network.aion.AionConnection;
 import com.aionemu.gameserver.network.aion.AionServerPacket;
 import com.aionemu.gameserver.services.ChatService;
-import com.aionemu.gameserver.utils.gametime.DateTimeUtil;
 
 /**
  * @author -Nemesiss- CC fix
@@ -59,7 +60,8 @@ public class SM_VERSION_CHECK extends AionServerPacket {
 	public SM_VERSION_CHECK(int version) {
 		this.version = version;
 
-		if (MembershipConfig.CHARACTER_ADDITIONAL_ENABLE != 10 && MembershipConfig.CHARACTER_ADDITIONAL_COUNT > GSConfig.CHARACTER_LIMIT_COUNT) {
+		if (MembershipConfig.CHARACTER_ADDITIONAL_ENABLE != 10
+				&& MembershipConfig.CHARACTER_ADDITIONAL_COUNT > GSConfig.CHARACTER_LIMIT_COUNT) {
 			characterLimitCount = MembershipConfig.CHARACTER_ADDITIONAL_COUNT;
 		} else {
 			characterLimitCount = GSConfig.CHARACTER_LIMIT_COUNT;
@@ -99,29 +101,29 @@ public class SM_VERSION_CHECK extends AionServerPacket {
 		}
 		if (version == 213) {
 			log.info("Authentication with Client Version 5.8");
+		} else if (version < 213) {
+			log.info("Authentication with Client Version lower than 5.8");
 		}
-		
-		int utcTimeSeconds = (int) (System.currentTimeMillis() / 1000);
-		int timezoneOffset = DateTimeUtil.getZone().getRules().getOffset(Instant.now()).getTotalSeconds();
-		
-		int localTimeSeconds = utcTimeSeconds + timezoneOffset;
-		
 		writeC(0x00);
 		writeC(NetworkConfig.GAMESERVER_ID);
-		writeD(180205);
-		writeD(171201);
-		writeD(0x00);
-		writeD(180205);
-		writeD(localTimeSeconds);
-		writeC(0x00);
-		writeC(GSConfig.SERVER_COUNTRY_CODE);
+		writeD(180205);// start year month day
+		writeD(171201);// start year month day
+		writeD(0x00);// spacing
+		writeD(180205);// year month day
+		writeD((int) (Calendar.getInstance().getTimeInMillis() / 1000)); // Start Server Time in Seconds Unit (Need to
+																			// Implements in Config Files)
+		writeC(0x00);// unk
+		writeC(GSConfig.SERVER_COUNTRY_CODE);// country code;
 		int serverMode = (characterLimitCount * 0x10) | characterFactionsMode;
 		writeC(serverMode | characterCreateMode);
-		writeD(localTimeSeconds);
-		
-		writeD(0);
-		
+		writeD((int) (Calendar.getInstance().getTimeInMillis() / 1000));
+		writeD(+10800);// 5.8 (-3600 = +1 Std, 0 = -1Std)
 		writeD(40014200);
+		// MOVED TO PACKET 168 (SM_UNK_168)
+		// writeC(GSConfig.CHARACTER_REENTRY_TIME);
+		// writeC(EventsConfig.ENABLE_DECOR);
+		// writeC(EventService.getInstance().getEventType().getId());
+		// MOVED TO PACKET 168 (SM_UNK_168)
 		writeD(0);
 		writeD(68536);
 		writeB(new byte[20]);
@@ -134,7 +136,9 @@ public class SM_VERSION_CHECK extends AionServerPacket {
 		writeD(1000);
 		writeH(1);
 		writeC(0);
+		// for... chat servers?
 		{
+			// if the correct ip is not sent it will not work
 			byte[] addr = IPConfig.getDefaultAddress();
 			for (IPRange range : IPConfig.getRanges()) {
 				if (range.isInRange(con.getIP())) {
