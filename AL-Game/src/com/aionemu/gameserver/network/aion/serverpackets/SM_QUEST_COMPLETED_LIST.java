@@ -1,18 +1,3 @@
-/*
- *
- *  Encom is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Encom is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Lesser Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser Public License
- *  along with Encom.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.aionemu.gameserver.network.aion.serverpackets;
 
 import com.aionemu.gameserver.network.aion.AionConnection;
@@ -22,22 +7,51 @@ import com.aionemu.gameserver.questEngine.model.QuestState;
 import javolution.util.FastList;
 
 public class SM_QUEST_COMPLETED_LIST extends AionServerPacket {
-	private FastList<QuestState> questState;
 
-	public SM_QUEST_COMPLETED_LIST(FastList<QuestState> questState) {
-		this.questState = questState;
-	}
+    private static final int MAX_PACKET_SIZE = 8000;
 
-	@Override
-	protected void writeImpl(AionConnection con) {
-		writeH(0x01); // 2.1
-		writeH(-questState.size() & 0xFFFF);
-		for (QuestState qs : questState) {
-			writeD(qs.getQuestId());
-			writeD(qs.getCompleteCount());
-			writeD(1); // unk 5.6
-		}
-		FastList.recycle(questState);
-		questState = null;
-	}
+    private static final int QUEST_SIZE = 12;
+
+    private final FastList<QuestState> allQuests;
+    private final int startIndex;
+    private final int totalSize;
+
+    public SM_QUEST_COMPLETED_LIST(FastList<QuestState> allQuests) {
+        this(allQuests, 0, allQuests.size());
+    }
+
+    private SM_QUEST_COMPLETED_LIST(FastList<QuestState> allQuests, int startIndex, int totalSize) {
+        this.allQuests = allQuests;
+        this.startIndex = startIndex;
+        this.totalSize = totalSize;
+    }
+
+    @Override
+    protected void writeImpl(AionConnection con) {
+        int maxQuestsThisPacket = (MAX_PACKET_SIZE - 4) / QUEST_SIZE;
+
+        int endIndex = Math.min(startIndex + maxQuestsThisPacket, totalSize);
+        int chunkSize = endIndex - startIndex;
+
+        writeC(1);
+        writeC(startIndex == 0 ? 0 : 1);
+        writeH(-totalSize & 0xFFFF);
+
+        int index = 0;
+        for (QuestState qs : allQuests) {
+            if (index >= startIndex && index < endIndex) {
+                writeD(qs.getQuestId());
+                writeD(qs.getCompleteCount());
+                writeD(1);
+            }
+            index++;
+        }
+
+        if (endIndex < totalSize) {
+            SM_QUEST_COMPLETED_LIST nextPart = new SM_QUEST_COMPLETED_LIST(allQuests, endIndex, totalSize);
+            con.sendPacket(nextPart);
+        } else {
+            FastList.recycle(allQuests);
+        }
+    }
 }

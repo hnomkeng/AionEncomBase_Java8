@@ -142,92 +142,54 @@ public class MinionService {
 				MinionTemplate minionTemplate = null;
 				if (item.getItemTemplate().isMinionCashContract()) {
 					switch (item.getItemTemplate().getTemplateId()) {
-						case 190080017: // Shita (A)
-							minionId = 980073;
-							break;
-						case 190080018: // Grendal (A)
-							minionId = 980063;
-							break;
-						case 190080028: // Abija's (A)
-							minionId = 980043;
-							break;
-						case 190080029: // Hamerun's (A)
-							minionId = 980053;
-							break;
-						case 190080030: // Kerubiel's (A)
-							minionId = 980013;
-							break;
-						case 190080031: // Seiren's (A)
-							minionId = 980023;
-							break;
-						case 190080032: // Steel Rose's (A)
-							minionId = 980033;
-							break;
-						case 190080033: // Kerubian's (C)
-							minionId = 980011;
-							break;
-						case 190080035: // Shita (A)
-							minionId = 980073;
-							break;
-						case 190080036: // Grendal (A)
-							minionId = 980063;
-							break;
-						case 190080008: // Cute Minion Contract
-						case 190080013: // Cute Minion Contract
-							rnd = Rnd.get(0, 1000);
-							minionId = minionId(rnd);
-							break;
-						default:
-							minionId = minions.get(new Random().nextInt(minions.size()));
-							break;
-					}
-				} else {
-					switch (item.getItemTemplate().getTemplateId()) {
-						case 190080007: // Larger Minion Contract
-						case 190080008: // Cute Minion Contract
-						case 190080013: // Cute Minion Contract
-							rnd = Rnd.get(0, 1000);
+						case 190080007:
+						case 190080008:
+						case 190080013:
+							rnd = Rnd.get(0, 1610);
 							minionId = minionId(rnd);
 							break;
 
-						case 190080006: // Greater Minion Contract
-						case 190080012: // Special Minion Contract
-							rnd = Rnd.get(0, 800);
-							while (rnd == 106 ||    // Kerubiel A
-								   rnd == 212 ||    // Seiren A
-								   rnd == 318 ||    // Steel Rose A
-								   rnd == 424 ||    // Abija A
-								   rnd == 530 ||    // Hamerun A
-								   rnd == 636 ||    // Grendal A
-								   rnd == 742) {    // Sita A
-								rnd = Rnd.get(0, 800);
-							}
+						case 190080006:
+						case 190080012:
+							rnd = Rnd.get(0, 910);
 							minionId = minionId(rnd);
+							MinionTemplate mediumTemplate = DataManager.MINION_DATA.getMinionTemplate(minionId);
+							if (mediumTemplate != null) {
+								String rank = mediumTemplate.getGrade();
+								int attempts = 0;
+								while (rank.equals("A") && attempts < 50) {
+									rnd = Rnd.get(0, 910);
+									minionId = minionId(rnd);
+									mediumTemplate = DataManager.MINION_DATA.getMinionTemplate(minionId);
+									if (mediumTemplate != null) {
+										rank = mediumTemplate.getGrade();
+									}
+									attempts++;
+								}
+							}
 							break;
 
-						case 190080005: // Lesser Minion Contract
-						case 190080009: // Lesser Minion Contract
-						case 190080010: // Lesser Minion Contract (Elyos)
-						case 190080011: // Lesser Minion Contract (Asmodian)
-						case 190089999: // Lesser Minion Contract
-							rnd = Rnd.get(0, 500);
-							while (rnd == 106 ||    // Kerubiel A
-								   rnd == 212 ||    // Seiren A
-								   rnd == 318 ||    // Steel Rose A
-								   rnd == 424 ||    // Abija A
-								   rnd == 530 ||    // Hamerun A
-								   rnd == 636 ||    // Grendal A
-								   rnd == 742 ||    // Sita A
-								   (rnd >= 71 && rnd <= 105) ||    // Kerubiel B
-								   (rnd >= 177 && rnd <= 211) ||   // Seiren B
-								   (rnd >= 283 && rnd <= 317) ||   // Steel Rose B
-								   (rnd >= 389 && rnd <= 423) ||   // Abija B
-								   (rnd >= 495 && rnd <= 529) ||   // Hamerun B
-								   (rnd >= 601 && rnd <= 635) ||   // Grendal B
-								   (rnd >= 707 && rnd <= 741)) {   // Sita B
-								rnd = Rnd.get(0, 500);
-							}
+						case 190080005:
+						case 190080009:
+						case 190080010:
+						case 190080011:
+						case 190089999:
+							rnd = Rnd.get(0, 210);
 							minionId = minionId(rnd);
+							MinionTemplate lesserTemplate = DataManager.MINION_DATA.getMinionTemplate(minionId);
+							if (lesserTemplate != null) {
+								String rank = lesserTemplate.getGrade();
+								int attempts = 0;
+								while ((rank.equals("A") || rank.equals("B")) && attempts < 50) {
+									rnd = Rnd.get(0, 210);
+									minionId = minionId(rnd);
+									lesserTemplate = DataManager.MINION_DATA.getMinionTemplate(minionId);
+									if (lesserTemplate != null) {
+										rank = lesserTemplate.getGrade();
+									}
+									attempts++;
+								}
+							}
 							break;
 
 						default:
@@ -500,10 +462,10 @@ public class MinionService {
 	}
 
 	public void activateMinionFunction(Player player) {
-		long leftTime = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000); // + 30 Days
+		long leftTime = System.currentTimeMillis() + (30 * 24 * 60 * 60 * 1000);
 		System.out.println("Int Timestamp : " + new Timestamp(leftTime));
 		if (player.getInventory().tryDecreaseKinah(25000000)) {
-			player.getCommonData().setMinionFunctionTime(new Timestamp(leftTime)); // TODO
+			player.getCommonData().setMinionFunctionTime(new Timestamp(leftTime));
 			PacketSendUtility.sendPacket(player, new SM_MINIONS(9, leftTime));
 			PacketSendUtility.sendPacket(player, new SM_MINIONS(12));
 		} else {
@@ -511,7 +473,6 @@ public class MinionService {
 		}
 	}
 
-	// TODO
 	public void addMinionFunctionItems(Player player, int action, int minionObjectId, int itemId, int targetSlot, int destinationSlot) {
 		if (player.getMinion() == null) {
 			return;
@@ -532,7 +493,6 @@ public class MinionService {
 		PacketSendUtility.broadcastPacket(player, new SM_MINIONS(8, 0, minionObjectId, itemId, targetSlot, 0), true);
 	}
 
-	// TODO
 	public void buffPlayer(final Player player, final int minionObjectId, int itemId, final int slot) {
 		Minion minion = player.getMinion();
 		if (minion == null || minion.getCommonData().getDopingBag() == null) {
@@ -585,7 +545,6 @@ public class MinionService {
 		}
 	}
 
-	// TODO
 	public void relocateDoping(Player player, int minionObjectId, int targetSlot, int destinationSlot) {
 		MinionCommonData minions = player.getMinionList().getMinion(minionObjectId);
 		if (minions == null || minions.getDopingBag() == null) {
@@ -718,7 +677,7 @@ public class MinionService {
 		if (rnd < 125) {
 			result = false;
 			rnd = Rnd.get(0, 3);
-			log.warn("Combination failed. Using grade: " + grade + " and rnd: " + rnd + " to determine minionId.");
+			log.debug("Combination failed. Using grade: " + grade + " and rnd: " + rnd + " to determine minionId.");
 			switch (grade) {
 				case "D":
 					minionId = 980010;
@@ -730,13 +689,13 @@ public class MinionService {
 					minionId = player.getMinionList().getMinion(minionObjIds.get(rnd)).getMinionId();
 					break;
 				default:
-					log.warn("WARNING: Unknown grade: " + grade + ".  Using default minionId 0.");
+					log.debug("WARNING: Unknown grade: " + grade + ".  Using default minionId 0.");
 					minionId = 0;
 					break;
 			}
 		} else {
 			result = true;
-			log.warn("Combination succeeded. Using grade: " + grade + " to determine minionId.");
+			log.debug("Combination succeeded. Using grade: " + grade + " to determine minionId.");
 			switch (grade) {
 				case "D":
 					minionId = minionId(Rnd.get(36, 420));
@@ -756,7 +715,7 @@ public class MinionService {
 					}
 					break;
 				default:
-					log.warn("WARNING: Unknown grade: " + grade + ".  Using default minionId 0.");
+					log.debug("WARNING: Unknown grade: " + grade + ".  Using default minionId 0.");
 					minionId = 0;
 					break;
 			}
@@ -796,59 +755,95 @@ public class MinionService {
 		} else if (rnd <= 70) {
 			return 980011; // Kerubian C
 		} else if (rnd <= 105) {
-			return 980012; // Kerubiel B
-		} else if (rnd == 106) {
-			return 980013; // Arch Kerubiel A
-		} else if (rnd <= 141) {
-			return 980020; // Seiren D
-		} else if (rnd <= 176) {
-			return 980021; // Seiren C
-		} else if (rnd <= 211) {
-			return 980022; // Seiren B
-		} else if (rnd == 212) {
-			return 980023; // Seiren A
-		} else if (rnd <= 247) {
-			return 980030; // Steel Rose D
-		} else if (rnd <= 282) {
-			return 980031; // Steel Rose C
-		} else if (rnd <= 317) {
-			return 980032; // Steel Rose B
-		} else if (rnd == 318) {
-			return 980033; // Steel Rose A
-		} else if (rnd <= 353) {
-			return 980040; // Abija D
-		} else if (rnd <= 388) {
-			return 980041; // Abija C
-		} else if (rnd <= 423) {
-			return 980042; // Abija B
-		} else if (rnd == 424) {
-			return 980043; // Abija A
-		} else if (rnd <= 459) {
-			return 980050; // Hamerun D
-		} else if (rnd <= 494) {
-			return 980051; // Hamerun C
-		} else if (rnd <= 529) {
-			return 980052; // Hamerun B
-		} else if (rnd == 530) {
-			return 980053; // Hamerun A
-		} else if (rnd <= 565) {
-			return 980060; // Grendal D
-		} else if (rnd <= 600) {
-			return 980061; // Grendal C
-		} else if (rnd <= 635) {
-			return 980062; // Grendal B
-		} else if (rnd == 636) {
-			return 980063; // Grendal A
-		} else if (rnd <= 671) {
-			return 980070; // Sita D
-		} else if (rnd <= 706) {
-			return 980071; // Sita C
-		} else if (rnd <= 741) {
-			return 980072; // Sita B
-		} else if (rnd == 742) {
-			return 980073; // Sita A
+			return 980020; // Seiren C lv1
+		} else if (rnd <= 140) {
+			return 980021; // Seiren C lv2
+		} else if (rnd <= 175) {
+			return 980022; // Seiren C lv3
+		} else if (rnd <= 210) {
+			return 980023; // Seiren C lv4
+		} else if (rnd <= 245) {
+			return 980030; // Steel Rose C lv1
+		} else if (rnd <= 280) {
+			return 980031; // Steel Rose C lv2
+		} else if (rnd <= 315) {
+			return 980032; // Steel Rose C lv3
+		} else if (rnd <= 350) {
+			return 980033; // Steel Rose C lv4
+		} else if (rnd <= 385) {
+			return 980040; // Abija B lv1
+		} else if (rnd <= 420) {
+			return 980041; // Abija B lv2
+		} else if (rnd <= 455) {
+			return 980042; // Abija B lv3
+		} else if (rnd <= 490) {
+			return 980043; // Abija B lv4
+		} else if (rnd <= 525) {
+			return 980050; // Hamerun B lv1
+		} else if (rnd <= 560) {
+			return 980051; // Hamerun B lv2
+		} else if (rnd <= 595) {
+			return 980052; // Hamerun B lv3
+		} else if (rnd <= 630) {
+			return 980053; // Hamerun B lv4
+		} else if (rnd <= 665) {
+			return 980074; // Karemiwen B lv1
+		} else if (rnd <= 700) {
+			return 980075; // Karemiwen B lv2
+		} else if (rnd <= 735) {
+			return 980076; // Karemiwen B lv3
+		} else if (rnd <= 770) {
+			return 980077; // Karemiwen B lv4
+		} else if (rnd <= 805) {
+			return 980078; // Saendukal B lv1
+		} else if (rnd <= 840) {
+			return 980079; // Saendukal B lv2
+		} else if (rnd <= 875) {
+			return 980080; // Saendukal B lv3
+		} else if (rnd <= 910) {
+			return 980081; // Saendukal B lv4
+		} else if (rnd <= 945) {
+			return 980060; // Grendal A lv1
+		} else if (rnd <= 980) {
+			return 980061; // Grendal A lv2
+		} else if (rnd <= 1015) {
+			return 980062; // Grendal A lv3
+		} else if (rnd <= 1050) {
+			return 980063; // Grendal A lv4
+		} else if (rnd <= 1085) {
+			return 980070; // Sita A lv1
+		} else if (rnd <= 1120) {
+			return 980071; // Sita A lv2
+		} else if (rnd <= 1155) {
+			return 980072; // Sita A lv3
+		} else if (rnd <= 1190) {
+			return 980073; // Sita A lv4
+		} else if (rnd <= 1225) {
+			return 980082; // Weda A lv1
+		} else if (rnd <= 1260) {
+			return 980083; // Weda A lv2
+		} else if (rnd <= 1295) {
+			return 980084; // Weda A lv3
+		} else if (rnd <= 1330) {
+			return 980085; // Weda A lv4
+		} else if (rnd <= 1365) {
+			return 980086; // Kromede A lv1
+		} else if (rnd <= 1400) {
+			return 980087; // Kromede A lv2
+		} else if (rnd <= 1435) {
+			return 980088; // Kromede A lv3
+		} else if (rnd <= 1470) {
+			return 980089; // Kromede A lv4
+		} else if (rnd <= 1505) {
+			return 980090; // Hyperion A lv1
+		} else if (rnd <= 1540) {
+			return 980091; // Hyperion A lv2
+		} else if (rnd <= 1575) {
+			return 980092; // Hyperion A lv3
+		} else if (rnd <= 1610) {
+			return 980093; // Hyperion A lv4
 		} else {
-			return 980010;
+			return 980010; // Kerubar D (default)
 		}
 	}
 
