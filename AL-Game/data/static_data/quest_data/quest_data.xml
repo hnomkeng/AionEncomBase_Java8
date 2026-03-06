@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!--
-	Quest Data 5.8 [KOR442] MADE: Encom
-	Cleaned MATTY (ADev.Team)
+	Quest Data 5.8 [KOR442] MADE: Encom Cleaned MATTY (ADev.Team)
  -->
 <quests xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="quest_data.xsd">
   <quest id="1000" name="Prologue" nameId="1102000" minlevel_permitted="1" max_repeat_count="1" cannot_share="true" cannot_giveup="true" race_permitted="ELYOS" category="QUEST">
@@ -4603,8 +4602,12 @@
       <reward_item item_id="186000005" count="25" />
       <reward_item item_id="162000050" count="10" />
     </rewards>
+    <quest_drop npc_id="235504" item_id="182201769" chance="100" drop_each_member="1" />
     <quest_drop npc_id="235505" item_id="182201769" chance="100" drop_each_member="1" />
     <quest_drop npc_id="235506" item_id="182201769" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="235507" item_id="182201769" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="235508" item_id="182201769" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="235509" item_id="182201769" chance="100" drop_each_member="1" />
   </quest>
   <quest id="1670" name="Invisible Bridges" nameId="1102861" minlevel_permitted="38" max_repeat_count="1" cannot_share="true" race_permitted="ELYOS" category="QUEST">
     <rewards gold="46650" exp="3218619">
@@ -4734,10 +4737,9 @@
     <rewards exp="3243300" ap="200">
       <reward_item item_id="186000469" count="25" />
     </rewards>
-    <quest_drop npc_id="213684" item_id="182201804" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="213685" item_id="182201804" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="213686" item_id="182201805" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="213687" item_id="182201805" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="235440" item_id="182201804" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="235441" item_id="182201804" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="235442" item_id="182201805" chance="100" drop_each_member="1" />
     <start_conditions>
       <finished quest_id="1683" />
     </start_conditions>
@@ -5006,6 +5008,18 @@
     <quest_drop npc_id="252544" item_id="182202106" chance="100" drop_each_member="1" />
     <quest_drop npc_id="252545" item_id="182202106" chance="100" drop_each_member="1" />
     <quest_drop npc_id="252546" item_id="182202106" chance="100" drop_each_member="1" />
+  </quest>
+  <quest id="1751" name="Nemea's Research Sample" nameId="1104551" minlevel_permitted="45" max_repeat_count="1" race_permitted="ELYOS" category="QUEST">
+    <collect_items>
+       <collect_item item_id="182202109" count="5"/>
+       <collect_item item_id="182202110" count="7"/>
+    </collect_items>
+    <rewards gold="154080" exp="2193283" ap="100"/>
+      <quest_drop npc_id="253682" item_id="182202109"/>
+      <quest_drop npc_id="253684" item_id="182202109"/>
+      <quest_drop npc_id="253685" item_id="182202109"/>
+      <quest_drop npc_id="253720" item_id="182202110"/>
+      <quest_drop npc_id="253721" item_id="182202110"/>
   </quest>
   <quest id="1752" name="Daeva Of Flame's Request" nameId="1104552" minlevel_permitted="45" max_repeat_count="1" cannot_share="true" race_permitted="ELYOS" category="QUEST">
     <rewards gold="154080" exp="2193283" ap="150" />
@@ -6653,6 +6667,15 @@
       <selectable_reward_item item_id="111500751" count="1" />
     </rewards>
   </quest>
+  <quest id="2131" name="A Delivery of Leather" nameId="1103231" minlevel_permitted="5" max_repeat_count="1" race_permitted="ASMODIANS" category="QUEST">
+    <rewards gold="2680" exp="1573"/>
+    <start_conditions>
+      <finished quest_id="2115"/>
+    </start_conditions>
+    <quest_work_items>
+      <quest_work_item item_id="182203129" count="1"/>
+    </quest_work_items>
+  </quest>
   <quest id="2132" name="A New Skill" nameId="1103232" minlevel_permitted="3" max_repeat_count="1" cannot_share="true" cannot_giveup="true" race_permitted="ASMODIANS" category="IMPORTANT">
     <rewards exp="275" />
     <rewards exp="275" />
@@ -7952,6 +7975,15 @@
     <quest_drop npc_id="212673" item_id="182204139" chance="100" drop_each_member="1" />
     <quest_drop npc_id="212674" item_id="182204139" chance="100" drop_each_member="1" />
     <quest_drop npc_id="700251" item_id="182204140" />
+  </quest>
+  <quest id="2351" name="Swiftness for Hunters" nameId="1103551" minlevel_permitted="24" max_repeat_count="1" race_permitted="ASMODIANS" category="QUEST">
+    <rewards gold="27240" exp="155871">
+      <selectable_reward_item item_id="125002500" count="1"/>
+      <selectable_reward_item item_id="125002501" count="1"/>
+      <selectable_reward_item item_id="125002502" count="1"/>
+      <selectable_reward_item item_id="125002503" count="1"/>
+      <reward_item item_id="164000076" count="1"/>
+    </rewards>
   </quest>
   <quest id="2352" name="Courage for Hunters" nameId="1103552" minlevel_permitted="24" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="QUEST">
     <rewards gold="10840" exp="155871">
@@ -9452,7 +9484,7 @@
     <quest_drop npc_id="213799" item_id="182204225" chance="100" drop_each_member="1" />
     <quest_drop npc_id="213800" item_id="182204226" chance="100" drop_each_member="1" />
   </quest>
-  <quest id="2495" name="Sprigg Nightlights" nameId="1103695" minlevel_permitted="24" max_repeat_count="1" cannot_share="true" race_permitted="PC_ALL" category="IMPORTANT">
+  <quest id="2495" name="Sprigg Nightlights" nameId="1103695" minlevel_permitted="24" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="IMPORTANT">
     <collect_items>
       <collect_item item_id="182204227" count="3" />
       <collect_item item_id="182204228" count="3" />
@@ -17387,32 +17419,6 @@
       <selectable_reward_item item_id="122001057" count="1" />
       <selectable_reward_item item_id="122001058" count="1" />
     </rewards>
-    <quest_drop npc_id="212918" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212919" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212901" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212903" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212907" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212925" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212927" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212917" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212926" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212902" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212904" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212905" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212924" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212906" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212908" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212909" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212910" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212923" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212921" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212920" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212916" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212915" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212914" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212913" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212912" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212911" item_id="186000047" chance="100" drop_each_member="1" />
   </quest>
   <quest id="4305" name="[Group] Burning Oaths" nameId="1103702" minlevel_permitted="37" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="QUEST">
     <collect_items>
@@ -17423,32 +17429,6 @@
       <selectable_reward_item item_id="120000921" count="1" />
       <reward_item item_id="188100335" count="168" />
     </rewards>
-    <quest_drop npc_id="212918" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212919" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212901" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212903" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212907" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212925" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212927" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212917" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212926" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212902" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212904" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212905" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212924" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212906" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212908" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212909" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212910" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212923" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212921" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212920" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212916" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212915" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212914" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212913" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212912" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212911" item_id="186000047" chance="100" drop_each_member="1" />
   </quest>
   <quest id="4306" name="[Group] Reckless For A Necklace" nameId="1103703" minlevel_permitted="37" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="QUEST">
     <collect_items>
@@ -17459,32 +17439,6 @@
       <selectable_reward_item item_id="121000841" count="1" />
       <reward_item item_id="188050589" count="5" />
     </rewards>
-    <quest_drop npc_id="212918" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212919" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212901" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212903" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212907" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212925" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212927" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212917" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212926" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212902" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212904" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212905" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212924" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212906" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212908" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212909" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212910" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212923" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212921" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212920" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212916" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212915" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212914" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212913" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212912" item_id="186000047" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="212911" item_id="186000047" chance="100" drop_each_member="1" />
   </quest>
   <quest id="4307" name="Suspicious Beverage" nameId="1103704" minlevel_permitted="37" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="QUEST">
     <rewards exp="1496758">
@@ -27722,9 +27676,6 @@
       <selectable_reward_item item_id="167000555" count="1" />
     </rewards>
   </quest>
-  <quest id="12999" name="Katalam" nameId="1141523" minlevel_permitted="10" max_repeat_count="1" cannot_share="true" cannot_giveup="true" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="1" />
-  </quest>
   <quest id="13305" name="Meet Stifas the Stiff" nameId="1140323" minlevel_permitted="65" max_repeat_count="1" race_permitted="ELYOS" category="IMPORTANT">
     <rewards gold="75330" exp="1723277" />
   </quest>
@@ -28588,21 +28539,22 @@
       <selectable_reward_item item_id="121001396" count="1" />
       <selectable_reward_item item_id="121001397" count="1" />
     </rewards>
-    <quest_drop npc_id="210158" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210165" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210166" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210167" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210170" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210171" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210175" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210176" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210177" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210183" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210184" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210354" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210355" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210692" item_id="182215315" chance="100" drop_each_member="1" />
-    <quest_drop npc_id="210693" item_id="182215315" chance="100" drop_each_member="1" />
+    <quest_drop npc_id="210712" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210158" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210165" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210166" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210167" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210170" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210171" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210175" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210176" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210177" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210183" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210184" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210354" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210355" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210692" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
+    <quest_drop npc_id="210693" item_id="182215315" chance="100" drop_each_member="1" collecting_step="3"/>
     <class_permitted>GLADIATOR TEMPLAR ASSASSIN RANGER SORCERER SPIRIT_MASTER CHANTER CLERIC GUNSLINGER SONGWEAVER TECHNIST AETHERTECH</class_permitted>
   </quest>
   <quest id="14015" name="Not Blinded by Vengeance" nameId="1129877" minlevel_permitted="20" max_repeat_count="1" cannot_share="true" cannot_giveup="true" race_permitted="ELYOS" category="MISSION">
@@ -29147,9 +29099,6 @@
   <quest id="14204" name="Veritable Treasure" nameId="1802351" minlevel_permitted="49" max_repeat_count="1" race_permitted="ELYOS" category="IMPORTANT">
     <rewards gold="108110" exp="7667186" />
   </quest>
-  <quest id="14210" name="Bring Down the Dragon" nameId="1111700" minlevel_permitted="66" max_repeat_count="1" race_permitted="ELYOS" category="IMPORTANT">
-    <rewards gold="155160" exp="8868125" />
-  </quest>
   <quest id="14211" name="Empyrean Scribe" nameId="1800565" minlevel_permitted="66" max_repeat_count="1" race_permitted="ELYOS" category="IMPORTANT" repeat_cycle="WED">
     <rewards gp="100" />
   </quest>
@@ -29567,12 +29516,6 @@
       <reward_item item_id="186000231" count="12" />
       <reward_item item_id="186000237" count="30" />
     </rewards>
-  </quest>
-  <quest id="15097" name="Risen Relic" nameId="1800809" minlevel_permitted="10" max_repeat_count="1" race_permitted="PC_ALL" category="NON_COUNT">
-    <rewards />
-  </quest>
-  <quest id="15098" name="What the ship?" nameId="1800810" minlevel_permitted="10" max_repeat_count="1" race_permitted="ELYOS" category="SIGNIFICANT">
-    <rewards exp="30721" />
   </quest>
   <quest id="15100" name="Desert Vermin" nameId="1800812" minlevel_permitted="64" max_repeat_count="1" race_permitted="ELYOS" category="IMPORTANT">
     <rewards gold="150660" exp="9981788">
@@ -31154,6 +31097,30 @@
     </rewards>
     <start_conditions>
       <finished quest_id="15550" />
+    </start_conditions>
+  </quest>
+  <quest id="15590" name="[Daily] Report on the Fragments of the Tower of Eternity" nameId="1802146" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ELYOS" category="SEEN_MARKER">
+    <rewards exp="39787200">
+      <reward_item item_id="186000236" count="5"/>
+      <reward_item item_id="186000492" count="1"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="15550"/>
+    </start_conditions>
+    <quest_work_items>
+      <quest_work_item item_id="182215978" count="1"/>
+      <quest_work_item item_id="182215979" count="1"/>
+      <quest_work_item item_id="182215980" count="1"/>
+      <quest_work_item item_id="182215981" count="1"/>
+    </quest_work_items>
+  </quest>
+  <quest id="15595" name="[Spy/Daily] Attack on Nosra" nameId="1802150" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ELYOS" category="PUBLIC">
+    <rewards exp="45755280" gp="6" expBoost="50">
+      <reward_item item_id="186000414" count="2"/>
+      <reward_item item_id="188100391" count="100"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="15550"/>
     </start_conditions>
   </quest>
   <quest id="15596" name="Give No Quarter" nameId="1802151" minlevel_permitted="66" max_repeat_count="255" race_permitted="ELYOS" category="PUBLIC" repeat_cycle="ALL">
@@ -32876,7 +32843,7 @@
       <finished quest_id="18222" />
     </start_conditions>
   </quest>
-  <quest id="18224" name="Fight Another Day" nameId="1199937" minlevel_permitted="61" max_repeat_count="255" cannot_share="true" race_permitted="PC_ALL" category="SEEN_MARKER">
+  <quest id="18224" name="Fight Another Day" nameId="1199937" minlevel_permitted="61" max_repeat_count="255" cannot_share="true" race_permitted="ELYOS" category="SEEN_MARKER">
     <rewards exp="4825175">
       <selectable_reward_item item_id="164000154" count="7" />
       <selectable_reward_item item_id="164000158" count="7" />
@@ -33946,6 +33913,16 @@
       <selectable_reward_item item_id="167000518" count="1" />
       <selectable_reward_item item_id="167000555" count="1" />
     </rewards>
+  </quest>
+  <quest id="18745" name="[Instance] Steal from the Stealers" nameId="1801980" minlevel_permitted="60" max_repeat_count="10" use_class_reward="2" race_permitted="ELYOS" category="IMPORTANT">
+    <collect_items>
+      <collect_item item_id="182215943" count="1"/>
+    </collect_items>
+    <rewards exp="3741284"/>
+    <extended_rewards exp="1">
+      <reward_item item_id="188054371" count="1"/>
+    </extended_rewards>
+    <quest_drop npc_id="702958" item_id="182215943"/>
   </quest>
   <quest id="18800" name="[Housing] The Living Is Easy" nameId="1136584" minlevel_permitted="21" max_repeat_count="1" cannot_share="true" race_permitted="ELYOS" category="SEEN_MARKER">
     <rewards exp="12951" />
@@ -39429,9 +39406,6 @@
       <finished quest_id="24202" />
     </start_conditions>
   </quest>
-  <quest id="24210" name="Burning the Dragon" nameId="1111701" minlevel_permitted="66" max_repeat_count="1" race_permitted="ASMODIANS" category="IMPORTANT">
-    <rewards gold="155160" exp="8868125" />
-  </quest>
   <quest id="24211" name="Agent's Appreciation" nameId="1800566" minlevel_permitted="66" max_repeat_count="1" race_permitted="ASMODIANS" category="IMPORTANT" repeat_cycle="WED">
     <rewards gp="100" />
   </quest>
@@ -39467,6 +39441,11 @@
     <start_conditions>
       <finished quest_id="24112" />
     </start_conditions>
+  </quest>
+  <quest id="24240" name="Wig Out Over the Sprigg Sprout" nameId="1800195" minlevel_permitted="24" max_repeat_count="1" race_permitted="ASMODIANS" category="IMPORTANT">
+    <rewards exp="432724">
+      <reward_item item_id="186000007" count="6"/>
+    </rewards>
   </quest>
   <quest id="24241" name="You Have a Choice..." nameId="1800203" minlevel_permitted="25" max_repeat_count="1" race_permitted="ASMODIANS" category="IMPORTANT">
     <rewards exp="285255">
@@ -39948,9 +39927,6 @@
       <reward_item item_id="186000237" count="30" />
     </rewards>
     <quest_drop npc_id="702768" item_id="182215736" chance="100" drop_each_member="1" />
-  </quest>
-  <quest id="25099" name="How the Ship?" nameId="1801116" minlevel_permitted="10" maxlevel_permitted="999" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="SIGNIFICANT">
-    <rewards exp="30721" />
   </quest>
   <quest id="25200" name="Break Elyos, Take Token" nameId="1801240" minlevel_permitted="65" maxlevel_permitted="999" max_repeat_count="255" cannot_share="true" race_permitted="ASMODIANS" category="QUEST">
     <collect_items>
@@ -41476,6 +41452,30 @@
     </rewards>
     <start_conditions>
       <finished quest_id="25550" />
+    </start_conditions>
+  </quest>
+  <quest id="25590" name="[Daily] Report on the Fragments of the Tower of Eternity" nameId="1802217" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ASMODIANS" category="SEEN_MARKER">
+    <rewards exp="39787200">
+      <reward_item item_id="186000236" count="5"/>
+      <reward_item item_id="186000492" count="1"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="25550"/>
+    </start_conditions>
+    <quest_work_items>
+      <quest_work_item item_id="182215982" count="1"/>
+      <quest_work_item item_id="182215983" count="1"/>
+      <quest_work_item item_id="182215984" count="1"/>
+      <quest_work_item item_id="182215985" count="1"/>
+    </quest_work_items>
+  </quest>
+  <quest id="25595" name="[Spy/Daily] Attack on Esterra" nameId="1802221" minlevel_permitted="66" maxlevel_permitted="75" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ASMODIANS" category="PUBLIC">
+    <rewards exp="45755280" gp="6" expBoost="50">
+      <reward_item item_id="186000414" count="2"/>
+      <reward_item item_id="188100391" count="100"/>
+    </rewards>
+    <start_conditions>
+      <finished quest_id="25550"/>
     </start_conditions>
   </quest>
   <quest id="25596" name="[Urgent Order] Protect Norsvold" nameId="1802222" minlevel_permitted="66" max_repeat_count="255" race_permitted="ASMODIANS" category="PUBLIC" repeat_cycle="ALL">
@@ -44264,6 +44264,16 @@
       <selectable_reward_item item_id="167000518" count="1" />
       <selectable_reward_item item_id="167000555" count="1" />
     </rewards>
+  </quest>
+  <quest id="28745" name="[Instance] Temporarily Stolen" nameId="1801981" minlevel_permitted="60" max_repeat_count="10" use_class_reward="2" race_permitted="ASMODIANS" category="IMPORTANT">
+    <collect_items>
+      <collect_item item_id="182215944" count="1"/>
+    </collect_items>
+    <rewards exp="3741284"/>
+    <extended_rewards exp="1">
+      <reward_item item_id="188054371" count="1"/>
+    </extended_rewards>
+    <quest_drop npc_id="702958" item_id="182215944"/>
   </quest>
   <quest id="28800" name="[Housing] Give My Regards To Pernon" nameId="1136602" minlevel_permitted="21" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="SEEN_MARKER">
     <rewards exp="12951" />
@@ -50276,121 +50286,6 @@
       <reward_item item_id="188052288" count="1" />
     </rewards>
   </quest>
-  <quest id="41600" name="Going On A Monster Hunt" nameId="1136010" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="186000143" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41601" name="Picking A Mark" nameId="1136011" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="186000143" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41602" name="Besieged by Peril" nameId="1136012" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="186000143" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41603" name="Stay On Target" nameId="1136013" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="186000143" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41604" name="Not For Teacher!" nameId="1136014" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="188051587" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41605" name="Headhunting" nameId="1136015" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="188051587" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41606" name="Kill The Head, Kill The Body" nameId="1136016" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="188051587" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41607" name="Getting A Head" nameId="1136017" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="852603">
-      <reward_item item_id="188051587" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41608" name="[Group] The Kill List" nameId="1136018" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="3552512">
-      <reward_item item_id="188051587" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41609" name="[Group] A Helping Hand" nameId="1136019" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="3552512">
-      <reward_item item_id="188051587" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41610" name="[Group] Balaur's Greatest Hits" nameId="1136020" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="3552512">
-      <reward_item item_id="188051589" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41611" name="[Group] High Command" nameId="1136021" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards exp="3552512">
-      <reward_item item_id="188051589" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41612" name="[Alliance] Morale Booster" nameId="1136022" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST" target_type="FORCE">
-    <rewards exp="5257717">
-      <reward_item item_id="188051610" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41613" name="[Alliance] Colossal Chaos" nameId="1136023" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST" target_type="FORCE">
-    <rewards exp="5257717">
-      <reward_item item_id="188051610" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41614" name="[Alliance] Personal Incarnation" nameId="1136024" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST" target_type="FORCE">
-    <rewards exp="5257717">
-      <reward_item item_id="188051611" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41615" name="[Daily] Target Acquisition" nameId="1136991" minlevel_permitted="58" max_repeat_count="255" race_permitted="PC_ALL" category="QUEST" repeat_cycle="ALL">
-    <rewards gold="31292" exp="852603">
-      <reward_item item_id="188051794" count="1" />
-    </rewards>
-  </quest>
-  <quest id="41616" name="[Daily] Target Offense" nameId="1136992" minlevel_permitted="58" max_repeat_count="255" race_permitted="PC_ALL" category="QUEST" repeat_cycle="ALL">
-    <rewards gold="31292" exp="852603">
-      <reward_item item_id="186000143" count="20" />
-    </rewards>
-  </quest>
-  <quest id="41617" name="[Weekly] Cavalry Charge" nameId="1136993" minlevel_permitted="58" max_repeat_count="255" race_permitted="PC_ALL" category="QUEST" repeat_cycle="WED">
-    <rewards gold="31292" exp="852603">
-      <reward_item item_id="186000143" count="20" />
-    </rewards>
-  </quest>
-  <quest id="41618" name="Aides, de-Camped" nameId="1136994" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST">
-    <rewards gold="31292" exp="852603">
-      <reward_item item_id="186000143" count="8" />
-    </rewards>
-  </quest>
-  <quest id="41619" name="[Daily/Group] Target Practice" nameId="1136995" minlevel_permitted="58" max_repeat_count="255" race_permitted="PC_ALL" category="QUEST" repeat_cycle="ALL">
-    <rewards gold="62584" exp="3552512">
-      <reward_item item_id="186000143" count="30" />
-    </rewards>
-  </quest>
-  <quest id="41620" name="[Weekly/Group] The Protectorate" nameId="1136996" minlevel_permitted="58" max_repeat_count="255" race_permitted="PC_ALL" category="QUEST" repeat_cycle="WED">
-    <rewards gold="62584" exp="3552512">
-      <reward_item item_id="186000143" count="30" />
-    </rewards>
-  </quest>
-  <quest id="41621" name="[Weekly/Alliance] Monstrous Problems" nameId="1136997" minlevel_permitted="58" max_repeat_count="255" race_permitted="PC_ALL" category="QUEST" repeat_cycle="WED" target_type="FORCE">
-    <rewards gold="93876" exp="5257717">
-      <reward_item item_id="186000143" count="40" />
-    </rewards>
-  </quest>
-  <quest id="41622" name="[Alliance] Target Incarnatet" nameId="1136998" minlevel_permitted="58" max_repeat_count="1" race_permitted="PC_ALL" category="QUEST" target_type="FORCE">
-    <rewards gold="93876" exp="5257717">
-      <reward_item item_id="186000143" count="24" />
-    </rewards>
-  </quest>
   <quest id="42000" name="[Event/Daily] Challenge! Destruction of Gegares in the Rift of Oblivionn" nameId="1803826" minlevel_permitted="66" max_repeat_count="255" repeat_cycle="ALL" race_permitted="ELYOS" category="EVENT">
     <inventory_items>
       <inventory_item item_id="186000493" />
@@ -56180,9 +56075,6 @@
       <finished quest_id="80314" />
     </start_conditions>
   </quest>
-  <quest id="80315" name="The Reason Why the Hero of Guardians Shines" nameId="1199914" minlevel_permitted="25" maxlevel_permitted="35" max_repeat_count="1" cannot_share="true" race_permitted="ELYOS" category="EVENT">
-    <rewards gold="10000" exp="540340" ap="14650" />
-  </quest>
   <quest id="80316" name="Befitting the Hero of the Guardians (for damage dealers)" nameId="1199915" minlevel_permitted="25" maxlevel_permitted="35" max_repeat_count="1" cannot_share="true" race_permitted="ELYOS" category="EVENT">
     <collect_items>
       <collect_item item_id="122000906" count="1" />
@@ -56229,9 +56121,6 @@
     <start_conditions>
       <finished quest_id="80319" />
     </start_conditions>
-  </quest>
-  <quest id="80321" name="The Reason Why the Hero of Archons Shines" nameId="1199920" minlevel_permitted="25" maxlevel_permitted="35" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="EVENT">
-    <rewards gold="10000" exp="540340" ap="14650" />
   </quest>
   <quest id="80322" name="Befitting the Hero of Archons (for damage dealers)" nameId="1199921" minlevel_permitted="25" maxlevel_permitted="35" max_repeat_count="1" cannot_share="true" race_permitted="ASMODIANS" category="EVENT">
     <collect_items>
@@ -61355,7 +61244,6 @@
       <reward_item item_id="164002111" count="1" />
     </rewards>
     <extended_rewards exp="1">
-      <!-- repeat_count="5" -->
       <reward_item item_id="188058635" count="1" />
     </extended_rewards>
     <start_conditions>
@@ -61389,21 +61277,5 @@
     <rewards exp="1400000000" abyssOp="50000">
       <reward_item item_id="186000454" count="1" />
     </rewards>
-  </quest>
-  <quest id="99000" name="[Test] Dimensional Vortex" nameId="1140020" minlevel_permitted="60" max_repeat_count="255" race_permitted="PC_ALL" category="PUBLIC" target_type="AREA">
-    <rewards gold="99000" exp="99000" />
-  </quest>
-  <quest id="99001" name="[Test] Score Reward" nameId="1140023" minlevel_permitted="1" max_repeat_count="5" race_permitted="PC_ALL" category="QUEST">
-    <rewards gold="99001" exp="99001" />
-  </quest>
-  <quest id="99002" name="[Test] Inventory Item Check" nameId="1141533" minlevel_permitted="60" max_repeat_count="255" cannot_share="true" race_permitted="ELYOS" category="QUEST">
-    <collect_items>
-      <collect_item item_id="186000469" count="300" />
-    </collect_items>
-    <inventory_items>
-      <inventory_item item_id="186000469" />
-    </inventory_items>
-    <rewards />
-    <bonus level="5" type="MEDAL" />
   </quest>
 </quests>

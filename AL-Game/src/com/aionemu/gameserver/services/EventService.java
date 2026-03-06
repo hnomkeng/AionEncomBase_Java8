@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,13 +15,13 @@
  */
 package com.aionemu.gameserver.services;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.concurrent.Future;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +38,7 @@ import com.aionemu.gameserver.questEngine.model.QuestState;
 import com.aionemu.gameserver.questEngine.model.QuestStatus;
 import com.aionemu.gameserver.utils.PacketSendUtility;
 import com.aionemu.gameserver.utils.ThreadPoolManager;
+import com.aionemu.gameserver.utils.gametime.DateTimeUtil;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 
@@ -76,10 +76,8 @@ public class EventService {
 	}
 
 	/**
-	 * This method is called just after player logged in to the game.<br>
-	 * <br>
-	 * <b><font color='red'>NOTICE: </font>This method must not be called from
-	 * anywhere else.</b>
+	 * This method is called just after player logged in to the game.
+	 * This method must not be called from anywhere else.
 	 */
 	public void onPlayerLogin(Player player) {
 		List<Integer> activeStartQuests = new ArrayList<Integer>();
@@ -107,8 +105,7 @@ public class EventService {
 		map2.clear();
 	}
 
-	void StartOrMaintainQuests(Player player, ListIterator<Integer> questList,
-			TIntObjectHashMap<List<EventTemplate>> templateMap, boolean start) {
+	void StartOrMaintainQuests(Player player, ListIterator<Integer> questList, TIntObjectHashMap<List<EventTemplate>> templateMap, boolean start) {
 		while (questList.hasNext()) {
 			int questId = questList.next();
 			QuestState qs = player.getQuestStateList().getQuestState(questId);
@@ -150,11 +147,11 @@ public class EventService {
 
 				if (qs != null) {
 					if (qs.getCompleteTime() != null || status == QuestStatus.COMPLETE) {
-						DateTime completed = null;
+						ZonedDateTime completed = null;
 						if (qs.getCompleteTime() == null) {
-							completed = new DateTime(0);
+							completed = ZonedDateTime.now().withYear(1970).withMonth(1).withDayOfMonth(1).withHour(0).withMinute(0);
 						} else {
-							completed = new DateTime(qs.getCompleteTime().getTime());
+							completed = ZonedDateTime.ofInstant(java.time.Instant.ofEpochMilli(qs.getCompleteTime().getTime()), java.time.ZoneId.systemDefault());
 						}
 						if (templateMap.containsKey(questId)) {
 							for (EventTemplate et : templateMap.get(questId)) {
@@ -173,8 +170,7 @@ public class EventService {
 					}
 					// re-register quests
 					if (status == QuestStatus.COMPLETE) {
-						PacketSendUtility.sendPacket(player,
-								new SM_QUEST_ACTION(questId, status, qs.getQuestVars().getQuestVars()));
+						PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(questId, status, qs.getQuestVars().getQuestVars()));
 					} else {
 						QuestService.startEventQuest(cookie, status);
 					}

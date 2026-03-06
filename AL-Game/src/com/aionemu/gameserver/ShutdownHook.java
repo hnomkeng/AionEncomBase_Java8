@@ -1,24 +1,10 @@
-/*
-
- *
- *  Encom is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU Lesser Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  (at your option) any later version.
- *
- *  Encom is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU Lesser Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser Public License
- *  along with Encom.  If not, see <http://www.gnu.org/licenses/>.
- */
 package com.aionemu.gameserver;
 
 import static com.aionemu.gameserver.network.aion.serverpackets.SM_SYSTEM_MESSAGE.STR_SERVER_SHUTDOWN;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +37,9 @@ public class ShutdownHook extends Thread {
 	@Override
 	public void run() {
 		if (ShutdownConfig.HOOK_MODE == 1) {
-			shutdownHook(ShutdownConfig.HOOK_DELAY, ShutdownConfig.ANNOUNCE_INTERVAL, ShutdownMode.SHUTDOWN);
+			doShutdown(ShutdownConfig.HOOK_DELAY, ShutdownConfig.ANNOUNCE_INTERVAL, ShutdownMode.SHUTDOWN);
 		} else if (ShutdownConfig.HOOK_MODE == 2) {
-			shutdownHook(ShutdownConfig.HOOK_DELAY, ShutdownConfig.ANNOUNCE_INTERVAL, ShutdownMode.RESTART);
+			doShutdown(ShutdownConfig.HOOK_DELAY, ShutdownConfig.ANNOUNCE_INTERVAL, ShutdownMode.RESTART);
 		}
 	}
 
@@ -112,74 +98,123 @@ public class ShutdownHook extends Thread {
 		}
 	}
 
-	private void shutdownHook(int duration, int interval, ShutdownMode mode) {
-		for (int i = duration; i >= interval; i -= interval) {
-			try {
-				if (World.getInstance().getPlayersIterator().hasNext()) {
-					log.info("Runtime is " + mode.getText() + " in " + i + " seconds.");
-					sendShutdownMessage(i);
-					sendShutdownStatus(ShutdownConfig.SAFE_REBOOT);
-				} else {
-					log.info("Runtime is " + mode.getText() + " now ...");
-					break; // fast exit.
-				}
-
-				if (i > interval) {
-					sleep(interval * 1000);
-				} else {
-					sleep(i * 1000);
-				}
-			} catch (InterruptedException e) {
-				return;
-			}
-		}
-
-		// Disconnect login server from game.
-		LoginServer.getInstance().gameServerDisconnected();
-
-		// Disconnect all players.
-		Iterator<Player> onlinePlayers;
-		onlinePlayers = World.getInstance().getPlayersIterator();
-		while (onlinePlayers.hasNext()) {
-			Player activePlayer = onlinePlayers.next();
-			try {
-				PlayerLeaveWorldService.startLeaveWorld(activePlayer);
-			} catch (Exception e) {
-				log.error("Error while saving player " + e.getMessage());
-			}
-		}
-		log.info("All players are disconnected...");
-
-		RunnableStatsManager.dumpClassStats(SortBy.AVG);
-		PeriodicSaveService.getInstance().onShutdown();
-
-		// Save game time.
-		GameTimeManager.saveTime();
-		// Shutdown of cron service
-		CronService.getInstance().shutdown();
-		// ThreadPoolManager shutdown
-		ThreadPoolManager.getInstance().shutdown();
-
-		// Do system exit.
-		if (mode == ShutdownMode.RESTART) {
-			Runtime.getRuntime().halt(ExitCode.CODE_RESTART);
-		} else {
-			Runtime.getRuntime().halt(ExitCode.CODE_NORMAL);
-		}
-		log.info("Runtime is " + mode.getText() + " now...");
-	}
-
 	/**
 	 * @param delay
 	 * @param announceInterval
 	 * @param mode
 	 */
 	public void doShutdown(int delay, int announceInterval, ShutdownMode mode) {
-		shutdownHook(delay, announceInterval, mode);
+		log.info("Starting shutdown process with mode: {}, delay: {} seconds", mode.getText(), delay);
+		
+		for (int i = delay; i >= announceInterval; i -= announceInterval) {
+			try {
+				if (World.getInstance().getPlayersIterator().hasNext()) {
+					log.info("Runtime is " + mode.getText() + " in " + i + " seconds.");
+					sendShutdownMessage(i);
+					sendShutdownStatus(ShutdownConfig.SAFE_REBOOT);
+				} else {
+					log.info("No players online, proceeding with shutdown...");
+					break;
+				}
+
+				if (i > announceInterval) {
+					Thread.sleep(announceInterval * 1000);
+				} else {
+					Thread.sleep(i * 1000);
+				}
+			} catch (InterruptedException e) {
+				log.warn("Shutdown interrupted during announcement phase");
+				Thread.currentThread().interrupt();
+				return;
+			}
+		}
+
+		log.info("Starting final shutdown sequence...");
+		
+		try {
+			LoginServer.getInstance().gameServerDisconnected();
+			log.info("Disconnected from Login Server");
+		} catch (Exception e) {
+			log.error("Error disconnecting from Login Server", e);
+		}
+
+		List<Player> playersToDisconnect = new ArrayList<>();
+		Iterator<Player> onlinePlayers = World.getInstance().getPlayersIterator();
+		while (onlinePlayers.hasNext()) {
+			playersToDisconnect.add(onlinePlayers.next());
+		}
+
+		if (!playersToDisconnect.isEmpty()) {
+			log.info("Found {} players online, starting disconnect process...", playersToDisconnect.size());
+			
+			int maxWaitTime = 30000;
+			long startTime = System.currentTimeMillis();
+			
+			for (Player player : playersToDisconnect) {
+				try {
+					if (player != null && player.isOnline()) {
+						log.info("Disconnecting player: {}", player.getName());
+						PlayerLeaveWorldService.startLeaveWorld(player);
+					}
+				} catch (Exception e) {
+					log.error("Error while disconnecting player " + (player != null ? player.getName() : "unknown"), e);
+				}
+				
+				if (System.currentTimeMillis() - startTime > maxWaitTime) {
+					log.warn("Player disconnect taking too long, forcing shutdown...");
+					break;
+				}
+				
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					log.warn("Interrupted during player disconnect");
+					Thread.currentThread().interrupt();
+					break;
+				}
+			}
+			
+			try {
+				log.info("Waiting for disconnect operations to complete...");
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				log.warn("Final wait interrupted");
+				Thread.currentThread().interrupt();
+			}
+		} else {
+			log.info("No players online to disconnect");
+		}
+
+		log.info("All players processed, continuing shutdown...");
+
+		try {
+			RunnableStatsManager.dumpClassStats(SortBy.AVG);
+			PeriodicSaveService.getInstance().onShutdown();
+			GameTimeManager.saveTime();
+			CronService.getInstance().shutdown();
+			ThreadPoolManager.getInstance().shutdown();
+			
+			log.info("All services shut down successfully");
+		} catch (Exception e) {
+			log.error("Error during service shutdown", e);
+		}
+
+		log.info("Runtime is " + mode.getText() + " now...");
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+
+		if (mode == ShutdownMode.RESTART) {
+			Runtime.getRuntime().halt(ExitCode.CODE_RESTART);
+		} else {
+			Runtime.getRuntime().halt(ExitCode.CODE_NORMAL);
+		}
 	}
 
 	private static final class SingletonHolder {
-
 		private static final ShutdownHook INSTANCE = new ShutdownHook();
 	}
 }

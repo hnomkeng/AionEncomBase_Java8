@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -17,6 +16,7 @@
 package com.aionemu.gameserver.services;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,6 +96,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 public final class QuestService {
+
 	static QuestsData questsData = DataManager.QUEST_DATA;
 	private static final Logger log = LoggerFactory.getLogger(QuestService.class);
 	private static Multimap<Integer, QuestDrop> questDrop = ArrayListMultimap.create();
@@ -158,8 +158,7 @@ public final class QuestService {
 		int dialogId = env.getDialogId();
 		if (dialogId != 23 && dialogId != 0 && !extended) {
 			QuestState qs = player.getQuestStateList().getQuestState(id);
-			boolean isLastRepeat = qs.getCompleteCount() == template.getMaxRepeatCount() - 1
-					&& template.getMaxRepeatCount() < 255;
+			boolean isLastRepeat = qs.getCompleteCount() == template.getMaxRepeatCount() - 1 && template.getMaxRepeatCount() < 255;
 			if (isLastRepeat && template.isUseSingleClassReward() || template.isUseRepeatedClassReward()) {
 				QuestItems classRewardItem = null;
 				PlayerClass playerClass = player.getCommonData().getPlayerClass();
@@ -226,8 +225,7 @@ public final class QuestService {
 			}
 		} else if (dialogId == 23 && dialogId != 0 && !extended) {
 			QuestState qs = player.getQuestStateList().getQuestState(id);
-			boolean isLastRepeat = qs.getCompleteCount() == template.getMaxRepeatCount() - 1
-					&& template.getMaxRepeatCount() < 255;
+			boolean isLastRepeat = qs.getCompleteCount() == template.getMaxRepeatCount() - 1 && template.getMaxRepeatCount() < 255;
 			if (isLastRepeat && template.isUseSingleClassReward() || template.isUseRepeatedClassReward()) {
 				QuestItems classRewardItem = null;
 				PlayerClass playerClass = player.getCommonData().getPlayerClass();
@@ -313,8 +311,7 @@ public final class QuestService {
 	private static void giveReward(QuestEnv env, Rewards rewards) {
 		Player player = env.getPlayer();
 		if (rewards.getGold() != null) {
-			player.getInventory().increaseKinah((long) (player.getRates().getQuestKinahRate() * rewards.getGold()),
-					ItemUpdateType.INC_KINAH_QUEST);
+			player.getInventory().increaseKinah((long) (player.getRates().getQuestKinahRate() * rewards.getGold()), ItemUpdateType.INC_KINAH_QUEST);
 		}
 		if (rewards.getExp() != null) {
 			NpcTemplate npcTemplate = DataManager.NPC_DATA.getNpcTemplate(env.getTargetId());
@@ -330,15 +327,12 @@ public final class QuestService {
 		}
 		// Abyss Landing 4.9.1
 		if (rewards.getAbyssOp() != null) {
-			AbyssLandingService.getInstance().AnnounceToPoints(player, null, null, rewards.getAbyssOp(),
-					LandingPointsEnum.QUEST);
+			AbyssLandingService.getInstance().AnnounceToPoints(player, null, null, rewards.getAbyssOp(), LandingPointsEnum.QUEST);
 			if (player.getRace() == Race.ASMODIANS) {
-				AbyssLandingService.getInstance().updateHarbingerLanding(rewards.getAbyssOp(), LandingPointsEnum.QUEST,
-						true);
+				AbyssLandingService.getInstance().updateHarbingerLanding(rewards.getAbyssOp(), LandingPointsEnum.QUEST, true);
 			}
 			if (player.getRace() == Race.ELYOS) {
-				AbyssLandingService.getInstance().updateRedemptionLanding(rewards.getAbyssOp(), LandingPointsEnum.QUEST,
-						true);
+				AbyssLandingService.getInstance().updateRedemptionLanding(rewards.getAbyssOp(), LandingPointsEnum.QUEST, true);
 			}
 		}
 		// Now player can win "Dp" if finish quest.
@@ -411,8 +405,9 @@ public final class QuestService {
 
 	private static Timestamp countNextRepeatTime(Player player, QuestTemplate template) {
 		int questCooltime = template.getQuestCoolTime();
-		DateTime now = DateTime.now();
-		DateTime repeatDate = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 9, 0, 0);
+		ZonedDateTime now = ZonedDateTime.now();
+		ZonedDateTime repeatDate = now.withHour(9).withMinute(0).withSecond(0).withNano(0);
+
 		if (template.isDaily()) {
 			if (now.isAfter(repeatDate)) {
 				repeatDate = repeatDate.plusHours(24);
@@ -421,28 +416,29 @@ public final class QuestService {
 		} else if (template.getQuestCoolTime() > 0) {
 			repeatDate = repeatDate.plusSeconds(template.getQuestCoolTime());
 			// This quest can be re-attempted in %DURATIONDAY0s.
-			PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1402676, +questCooltime));
+			PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1402676, questCooltime));
 		} else {
 			int daysToAdd = 7;
 			int startDay = 7;
 			for (QuestRepeatCycle weekDay : template.getRepeatCycle()) {
-				int diff = weekDay.getDay() - repeatDate.getDayOfWeek();
+				int dayValue = weekDay.getDay();
+				int diff = dayValue - repeatDate.getDayOfWeek().getValue();
 				if (diff > 0 && diff < daysToAdd) {
 					daysToAdd = diff;
 				}
-				if (startDay > weekDay.getDay()) {
-					startDay = weekDay.getDay();
+				if (startDay > dayValue) {
+					startDay = dayValue;
 				}
 			}
 			if (startDay == daysToAdd) {
 				daysToAdd = 7;
 			} else if (daysToAdd == 7 && startDay < 7) {
-				daysToAdd = 7 - repeatDate.getDayOfWeek() + startDay;
+				daysToAdd = 7 - repeatDate.getDayOfWeek().getValue() + startDay;
 			}
 			repeatDate = repeatDate.plusDays(daysToAdd);
 			PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1400857, new DescriptionId(1800667), "9"));
 		}
-		return new Timestamp(repeatDate.getMillis());
+		return new Timestamp(repeatDate.toInstant().toEpochMilli());
 	}
 
 	public static boolean checkStartConditions(QuestEnv env, boolean warn) {
@@ -460,24 +456,21 @@ public final class QuestService {
 				return false;
 			}
 		}
-		int levelDiff = template.getMinlevelPermitted() - player.getLevel();
-		if (levelDiff > 2 && template.getMinlevelPermitted() != 999) {
-			return false;
-		}
-		if (warn && levelDiff > 0 && (template.getMinlevelPermitted() != 999)) {
-			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE
-					.STR_QUEST_ACQUIRE_ERROR_MIN_LEVEL(Integer.toString(template.getMinlevelPermitted())));
-			return false;
-		}
+        int levelDiff = template.getMinlevelPermitted() - player.getLevel();
+        if (levelDiff > 0 && template.getMinlevelPermitted() != 999) {
+            QuestState qs = player.getQuestStateList().getQuestState(env.getQuestId());
+            if (warn && qs.getStatus() == QuestStatus.NONE) {
+                  PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_MIN_LEVEL(Integer.toString(template.getMinlevelPermitted())));
+            }
+            return false;
+        }
 		if (template.getMaxlevelPermitted() != 0 && player.getLevel() > template.getMaxlevelPermitted()) {
 			if (warn) {
-				PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE
-						.STR_QUEST_ACQUIRE_ERROR_MAX_LEVEL(Integer.toString(template.getMaxlevelPermitted())));
+				PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_MAX_LEVEL(Integer.toString(template.getMaxlevelPermitted())));
 			}
 			return false;
 		}
-		if (!template.getClassPermitted().isEmpty()
-				&& !template.getClassPermitted().contains(player.getCommonData().getPlayerClass())) {
+		if (!template.getClassPermitted().isEmpty() && !template.getClassPermitted().contains(player.getCommonData().getPlayerClass())) {
 			if (warn) {
 				PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_CLASS);
 			}
@@ -492,8 +485,7 @@ public final class QuestService {
 		if (template.getRequiredRank() != 0) {
 			if (player.getAbyssRank().getRank().getId() < template.getRequiredRank()) {
 				if (warn) {
-					PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_MIN_RANK(
-							AbyssRankEnum.getRankById(template.getRequiredRank()).getDescriptionId()));
+					PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_MIN_RANK(AbyssRankEnum.getRankById(template.getRequiredRank()).getDescriptionId()));
 				}
 				return false;
 			}
@@ -507,8 +499,7 @@ public final class QuestService {
 				return false;
 			}
 		}
-		if (((template.isMaster()) && (!CraftSkillUpdateService.canLearnMoreMasterCraftingSkill(player)))
-				|| ((template.isExpert()) && (!CraftSkillUpdateService.canLearnMoreExpertCraftingSkill(player)))) {
+		if (((template.isMaster()) && (!CraftSkillUpdateService.canLearnMoreMasterCraftingSkill(player))) || ((template.isExpert()) && (!CraftSkillUpdateService.canLearnMoreExpertCraftingSkill(player)))) {
 			return false;
 		}
 		int fulfilledStartConditions = 0;
@@ -544,8 +535,7 @@ public final class QuestService {
 			for (int skillId : skills) {
 				PlayerSkillEntry skill = player.getSkillList().getSkillEntry(skillId);
 				if (skill != null && skill.getSkillLevel() >= template.getCombineSkillPoint()) {
-					if (template.getCategory().equals(QuestCategory.TASK)
-							&& skill.getSkillLevel() - 40 > template.getCombineSkillPoint())
+					if (template.getCategory().equals(QuestCategory.TASK) && skill.getSkillLevel() - 40 > template.getCombineSkillPoint())
 						continue;
 					result = true;
 					break;
@@ -646,8 +636,7 @@ public final class QuestService {
 		if (template.getRacePermitted() != null && template.getRacePermitted() != player.getRace()) {
 			return false;
 		}
-		if (template.getClassPermitted().size() != 0
-				&& !template.getClassPermitted().contains(player.getCommonData().getPlayerClass())) {
+		if (template.getClassPermitted().size() != 0 && !template.getClassPermitted().contains(player.getCommonData().getPlayerClass())) {
 			return false;
 		}
 		if (template.getGenderPermitted() != null && template.getGenderPermitted() != player.getGender()) {
@@ -671,8 +660,7 @@ public final class QuestService {
 			boolean result = false;
 			for (int skillId : skills) {
 				PlayerSkillEntry skill = player.getSkillList().getSkillEntry(skillId);
-				if (skill != null && skill.getSkillLevel() >= template.getCombineSkillPoint()
-						&& skill.getSkillLevel() - 40 <= template.getCombineSkillPoint()) {
+				if (skill != null && skill.getSkillLevel() >= template.getCombineSkillPoint() && skill.getSkillLevel() - 40 <= template.getCombineSkillPoint()) {
 					result = true;
 					break;
 				}
@@ -775,8 +763,7 @@ public final class QuestService {
 		}
 		for (CollectItem collectItem : collectItems.getCollectItem()) {
 			int itemId = collectItem.getItemId();
-			long count = itemId == ItemId.KINAH.value() ? player.getInventory().getKinah()
-					: player.getInventory().getItemCountByItemId(itemId);
+			long count = itemId == ItemId.KINAH.value() ? player.getInventory().getKinah(): player.getInventory().getItemCountByItemId(itemId);
 			if (collectItem.getCount() > count) {
 				return false;
 			}
@@ -809,26 +796,20 @@ public final class QuestService {
 			}
 		}
 		if (requiredItemNameId != 0 && showWarning) {
-			PacketSendUtility.sendPacket(player,
-					SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_INVENTORY_ITEM(new DescriptionId(requiredItemNameId)));
+			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_QUEST_ACQUIRE_ERROR_INVENTORY_ITEM(new DescriptionId(requiredItemNameId)));
 		}
 		return requiredItemNameId == 0;
 	}
 
-	public static VisibleObject spawnQuestNpc(int worldId, int instanceId, int templateId, float x, float y, float z,
-			byte heading) {
-		return SpawnEngine.spawnObject(SpawnEngine.addNewSingleTimeSpawn(worldId, templateId, x, y, z, heading),
-				instanceId);
+	public static VisibleObject spawnQuestNpc(int worldId, int instanceId, int templateId, float x, float y, float z, byte heading) {
+		return SpawnEngine.spawnObject(SpawnEngine.addNewSingleTimeSpawn(worldId, templateId, x, y, z, heading), instanceId);
 	}
 
-	public static VisibleObject addNewSpawn(int worldId, int instanceId, int templateId, float x, float y, float z,
-			byte heading) {
-		return SpawnEngine.spawnObject(SpawnEngine.addNewSingleTimeSpawn(worldId, templateId, x, y, z, heading),
-				instanceId);
+	public static VisibleObject addNewSpawn(int worldId, int instanceId, int templateId, float x, float y, float z, byte heading) {
+		return SpawnEngine.spawnObject(SpawnEngine.addNewSingleTimeSpawn(worldId, templateId, x, y, z, heading), instanceId);
 	}
 
-	public static void addNewSpawn(int worldId, int instanceId, int templateId, float x, float y, float z, byte heading,
-			int timeInMin) {
+	public static void addNewSpawn(int worldId, int instanceId, int templateId, float x, float y, float z, byte heading, int timeInMin) {
 		final Npc npc = (Npc) spawnQuestNpc(worldId, instanceId, templateId, x, y, z, (byte) 0);
 		if (!npc.getPosition().isInstanceMap()) {
 			despawnQuestNpc(npc, timeInMin);
@@ -846,8 +827,7 @@ public final class QuestService {
 		}, 60000 * timeInMin);
 	}
 
-	public static int getQuestDrop(Set<DropItem> dropItems, int index, Npc npc, Collection<Player> players,
-			Player player) {
+	public static int getQuestDrop(Set<DropItem> dropItems, int index, Npc npc, Collection<Player> players, Player player) {
 		Collection<QuestDrop> drops = getQuestDrop(npc.getNpcId());
 		if (drops.isEmpty()) {
 			return index;
@@ -987,8 +967,7 @@ public final class QuestService {
 		
 		// 处理特殊掉落物品 / Handle special drop items
 		if (drop instanceof HandlerSideDrop) {
-			return ((HandlerSideDrop) drop).getNeededAmount() > player.getInventory()
-					.getItemCountByItemId(drop.getItemId());
+			return ((HandlerSideDrop) drop).getNeededAmount() > player.getInventory().getItemCountByItemId(drop.getItemId());
 		}
 		
 		// 获取当前掉落物品的ID / Get current drop item ID
@@ -996,8 +975,7 @@ public final class QuestService {
 		
 		// 检查是否是任务工作物品 / Check if it's a quest work item
 		QuestWorkItems workItems = qt.getQuestWorkItems();
-		if (workItems != null && workItems.getQuestWorkItem().stream()
-				.anyMatch(workItem -> workItem != null && workItem.getItemId() == dropItemId)) {
+		if (workItems != null && workItems.getQuestWorkItem().stream().anyMatch(workItem -> workItem != null && workItem.getItemId() == dropItemId)) {
 			// 检查玩家背包中是否已有该工作物品 / Check if player already has this work item
 			long count = player.getInventory().getItemCountByItemId(dropItemId);
 			// 如果已有工作物品则不再掉落 / Don't drop if player already has the work item
@@ -1098,6 +1076,7 @@ public final class QuestService {
 		if (template == null) {
 			return false;
 		}
+		
 		if (template.isCannotGiveup()) {
 			return false;
 		}
@@ -1105,10 +1084,7 @@ public final class QuestService {
 		if (qs == null) {
 			return false;
 		}
-		if (qs.getStatus() == QuestStatus.COMPLETE || qs.getStatus() == QuestStatus.LOCKED) {
-			AuditLogger.info(player, "Cancel from completed quest. quest Id: " + questId);
-			return false;
-		}
+ 
 		if (template.getNpcFactionId() != 0) {
 			player.getNpcFactions().abortQuest(template);
 		}

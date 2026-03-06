@@ -97,14 +97,13 @@ public class RiftManager {
 				vl.getSpawned().add(master);
 				vl.getSpawned().add(slave);
 			}
-			else {
-				spawned = rl.getSpawned().size();
-				rl.getSpawned().add(master);
-				rl.getSpawned().add(slave);
-			}
-		}
-
-		log.info("Rift opened: " + rift.name() + " successfully spawned " + spawned + " Npc.");
+            else {
+               rl.getSpawned().add(master);
+               rl.getSpawned().add(slave);
+           }
+           spawned += 2;
+       }
+       log.info("Rift opened: " + rift.name() + " successfully spawned " + spawned + " Npc.");
 	}
 
 	private Npc spawnInstance(int instance, SpawnTemplate template, RVController controller) {
@@ -116,8 +115,7 @@ public class RiftManager {
 
 		World world = World.getInstance();
 		world.storeObject(npc);
-		world.setPosition(npc, template.getWorldId(), instance, template.getX(),
-				template.getY(), template.getZ(), template.getHeading());
+		world.setPosition(npc, template.getWorldId(), instance, template.getX(), template.getY(), template.getZ(), template.getHeading());
 		world.spawn(npc);
 		rifts.add(npc);
 
@@ -135,8 +133,6 @@ public class RiftManager {
 	}
 
 	private static class RiftManagerHolder {
-
 		private static final RiftManager INSTANCE = new RiftManager();
 	}
-
 }

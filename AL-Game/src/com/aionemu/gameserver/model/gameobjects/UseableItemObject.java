@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -17,10 +16,9 @@
 package com.aionemu.gameserver.model.gameobjects;
 
 import java.nio.ByteBuffer;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import org.joda.time.DateTime;
 
 import com.aionemu.commons.network.util.ThreadPoolManager;
 import com.aionemu.gameserver.controllers.observer.ItemUseObserver;
@@ -41,6 +39,7 @@ import com.aionemu.gameserver.services.item.ItemService;
 import com.aionemu.gameserver.utils.PacketSendUtility;
 
 public class UseableItemObject extends HouseObject<HousingUseableItem> {
+
 	private volatile boolean mustGiveLastReward = false;
 	private AtomicReference<Player> usingPlayer = new AtomicReference<Player>();
 	private UseDataWriter entryWriter = null;
@@ -110,8 +109,7 @@ public class UseableItemObject extends HouseObject<HousingUseableItem> {
 		if (getObjectTemplate().getPlacementLimit() == LimitType.COOKING) {
 			if (player.getInventory().getItemCountByItemId(action.getRewardId()) > 0) {
 				int nameId = DataManager.ITEM_DATA.getItemTemplate(action.getRewardId()).getNameId();
-				SM_SYSTEM_MESSAGE msg = SM_SYSTEM_MESSAGE.STR_MSG_CANNOT_USE_ALREADY_HAVE_REWARD_ITEM(nameId,
-						getObjectTemplate().getNameId());
+				SM_SYSTEM_MESSAGE msg = SM_SYSTEM_MESSAGE.STR_MSG_CANNOT_USE_ALREADY_HAVE_REWARD_ITEM(nameId, getObjectTemplate().getNameId());
 				warnAndRelease(player, msg);
 				return;
 			}
@@ -138,14 +136,12 @@ public class UseableItemObject extends HouseObject<HousingUseableItem> {
 				List<Item> items = player.getEquipment().getEquippedItemsByItemId(requiredItem);
 				if (items.size() == 0) {
 					int descId = DataManager.ITEM_DATA.getItemTemplate(requiredItem).getNameId();
-					warnAndRelease(player,
-							SM_SYSTEM_MESSAGE.STR_MSG_CANT_USE_HOUSE_OBJECT_ITEM_EQUIP(new DescriptionId(descId)));
+					warnAndRelease(player, SM_SYSTEM_MESSAGE.STR_MSG_CANT_USE_HOUSE_OBJECT_ITEM_EQUIP(new DescriptionId(descId)));
 					return;
 				}
 			} else if (player.getInventory().getItemCountByItemId(requiredItem) < action.getRemoveCount()) {
 				int descId = DataManager.ITEM_DATA.getItemTemplate(requiredItem).getNameId();
-				warnAndRelease(player,
-						SM_SYSTEM_MESSAGE.STR_MSG_CANT_USE_HOUSE_OBJECT_ITEM_CHECK(new DescriptionId(descId)));
+				warnAndRelease(player, SM_SYSTEM_MESSAGE.STR_MSG_CANT_USE_HOUSE_OBJECT_ITEM_CHECK(new DescriptionId(descId)));
 				return;
 			}
 		}
@@ -170,16 +166,14 @@ public class UseableItemObject extends HouseObject<HousingUseableItem> {
 			}
 		};
 		player.getObserveController().attach(observer);
-		PacketSendUtility.sendPacket(player,
-				SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_OBJECT_USE(getObjectTemplate().getNameId()));
+		PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_OBJECT_USE(getObjectTemplate().getNameId()));
 		PacketSendUtility.sendPacket(player, new SM_USE_OBJECT(player.getObjectId(), getObjectId(), delay, 8));
 		player.getController().addTask(TaskId.HOUSE_OBJECT_USE,
 				ThreadPoolManager.getInstance().schedule(new Runnable() {
 					@Override
 					public void run() {
 						try {
-							PacketSendUtility.sendPacket(player,
-									new SM_USE_OBJECT(player.getObjectId(), getObjectId(), 0, 9));
+							PacketSendUtility.sendPacket(player, new SM_USE_OBJECT(player.getObjectId(), getObjectId(), 0, 9));
 							if (action.getRemoveCount() != null && action.getRemoveCount() != 0) {
 								player.getInventory().decreaseByItemId(requiredItem, action.getRemoveCount());
 							}
@@ -195,9 +189,7 @@ public class UseableItemObject extends HouseObject<HousingUseableItem> {
 									rewardId = action.getRewardId();
 									ItemService.addItem(player, rewardId, 1);
 									if (useCount == usedCount) {
-										PacketSendUtility.sendPacket(player,
-												SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_FLOWERPOT_GOAL(
-														myself.getObjectTemplate().getNameId()));
+										PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_FLOWERPOT_GOAL(myself.getObjectTemplate().getNameId()));
 										if (action.getFinalRewardId() == null) {
 											delete = true;
 										} else {
@@ -219,29 +211,28 @@ public class UseableItemObject extends HouseObject<HousingUseableItem> {
 										myself.incrementVisitorUsedCount();
 									}
 								}
-								PacketSendUtility.broadcastPacket(player,
-										new SM_OBJECT_USE_UPDATE(player.getObjectId(), ownerId, usedCount, myself),
-										true);
+								PacketSendUtility.broadcastPacket(player, new SM_OBJECT_USE_UPDATE(player.getObjectId(), ownerId, usedCount, myself), true);
 							}
 							if (rewardId > 0) {
 								int rewardNameId = DataManager.ITEM_DATA.getItemTemplate(rewardId).getNameId();
-								PacketSendUtility.sendPacket(player,
-										SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_OBJECT_REWARD_ITEM(
-												myself.getObjectTemplate().getNameId(), rewardNameId));
+								PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_OBJECT_REWARD_ITEM(myself.getObjectTemplate().getNameId(), rewardNameId));
 							}
 							if (delete) {
-								selfDestroy(player, SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_OBJECT_DELETE_USE_COUNT_FINAL(
-										getObjectTemplate().getNameId()));
+								selfDestroy(player, SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_OBJECT_DELETE_USE_COUNT_FINAL(getObjectTemplate().getNameId()));
 							} else {
 								Integer cd = myself.getObjectTemplate().getCd();
-								DateTime repeatDate;
+								int cooldownSeconds;
+								
 								if (cd == null || cd == 0) {
-									DateTime tomorrow = DateTime.now().plusDays(1);
-									repeatDate = new DateTime(tomorrow.getYear(), tomorrow.getMonthOfYear(),
-											tomorrow.getDayOfMonth(), 0, 0, 0);
-									cd = (int) (repeatDate.getMillis() - DateTime.now().getMillis()) / 1000;
+									// Reset at midnight (next day 00:00)
+									ZonedDateTime now = ZonedDateTime.now();
+									ZonedDateTime midnight = now.plusDays(1).withHour(0).withMinute(0).withSecond(0).withNano(0);
+									cooldownSeconds = (int) ((midnight.toInstant().toEpochMilli() - now.toInstant().toEpochMilli()) / 1000);
+								} else {
+									cooldownSeconds = cd;
 								}
-								player.getHouseObjectCooldownList().addHouseObjectCooldown(myself.getObjectId(), cd);
+								
+								player.getHouseObjectCooldownList().addHouseObjectCooldown(myself.getObjectId(), cooldownSeconds);
 							}
 						} finally {
 							player.getObserveController().removeObserver(observer);

@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -142,9 +141,7 @@ public class AnohaService {
 	public boolean adventSwordEffectSP(int id) {
 		switch (id) {
 		case 1:
-			adventSwordEffect.put(702644, SpawnEngine.spawnObject(
-					SpawnEngine.addNewSingleTimeSpawn(600090000, 702644, 791.27985f, 489.02353f, 142.90796f, (byte) 30),
-					1));
+			adventSwordEffect.put(702644, SpawnEngine.spawnObject(SpawnEngine.addNewSingleTimeSpawn(600090000, 702644, 791.27985f, 489.02353f, 142.90796f, (byte) 30), 1));
 			return true;
 		default:
 			return false;
@@ -157,9 +154,7 @@ public class AnohaService {
 			World.getInstance().doOnAllPlayers(new Visitor<Player>() {
 				@Override
 				public void visit(Player player) {
-					// Berserk Anoha will return to Kaldor in 30 minutes.
-					PacketSendUtility.playerSendPacketTime(player,
-							SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Named_Spawn_System, 0);
+					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Named_Spawn_System, 0); // Berserk Anoha will return to Kaldor in 30 minutes.
 				}
 			});
 			return true;
@@ -174,8 +169,7 @@ public class AnohaService {
 			World.getInstance().doOnAllPlayers(new Visitor<Player>() {
 				@Override
 				public void visit(Player player) {
-					// Enraged Wealhtheow Guardian will appear in 5 minutes.
-					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Anoha_01, 0);
+					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Anoha_01, 0); // Enraged Wealhtheow Guardian will appear in 5 minutes.
 				}
 			});
 			return true;
@@ -190,8 +184,7 @@ public class AnohaService {
 			World.getInstance().doOnAllPlayers(new Visitor<Player>() {
 				@Override
 				public void visit(Player player) {
-					// Enraged Wealhtheow Guardian will appear in 3 minutes.
-					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Anoha_02, 0);
+					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Anoha_02, 0); // Enraged Wealhtheow Guardian will appear in 3 minutes.
 				}
 			});
 			return true;
@@ -206,8 +199,7 @@ public class AnohaService {
 			World.getInstance().doOnAllPlayers(new Visitor<Player>() {
 				@Override
 				public void visit(Player player) {
-					// Enraged Wealhtheow Guardian will appear in 1 minute.
-					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Anoha_03, 0);
+					PacketSendUtility.playerSendPacketTime(player, SM_SYSTEM_MESSAGE.STR_MSG_LDF5_Fortress_Anoha_03, 0); // Enraged Wealhtheow Guardian will appear in 1 minute.
 				}
 			});
 			return true;
@@ -216,23 +208,41 @@ public class AnohaService {
 		}
 	}
 
-	public void sendRequest(final Player player) {
-		String message = "Berserk Anoha has appeared. Do you want to fight ?";
-		RequestResponseHandler responseHandler = new RequestResponseHandler(player) {
-			@Override
-			public void acceptRequest(Creature requester, Player responder) {
-				TeleportService2.teleportTo(responder, 600090000, 813.6149f, 503.42126f, 143.75f, (byte) 72);
-			}
-
-			@Override
-			public void denyRequest(Creature requester, Player responder) {
-			}
-		};
-		boolean requested = player.getResponseRequester().putRequest(902247, responseHandler);
-		if (requested) {
-			PacketSendUtility.sendPacket(player, new SM_QUESTION_WINDOW(902247, 0, 0, message));
-		}
-	}
+    public void sendRequest(final Player player) {
+	    if (player.getLevel() < 75) {
+            return;
+        }
+        
+        if (player == null || !player.isSpawned()) {
+            return;
+        }
+        
+        String message = "Berserk Anoha has appeared. Do you want to fight ?";
+        RequestResponseHandler responseHandler = new RequestResponseHandler(player) {
+            @Override
+            public void acceptRequest(Creature requester, Player responder) {
+                if (responder != null && responder.isOnline() && responder.getLevel() <= 75) {
+                    TeleportService2.teleportTo(responder, 600090000, 813.6149f, 503.42126f, 143.75f, (byte) 72);
+                }
+            }
+            
+            @Override
+            public void denyRequest(Creature requester, Player responder) {
+            }
+        };
+        
+        ThreadPoolManager.getInstance().schedule(new Runnable() {
+            @Override
+            public void run() {
+                if (player.isOnline() && player.isSpawned() && player.getLevel() <= 75) {
+                    boolean requested = player.getResponseRequester().putRequest(902247, responseHandler);
+                    if (requested) {
+                        PacketSendUtility.sendPacket(player, new SM_QUESTION_WINDOW(902247, 0, 0, message));
+                    }
+                }
+            }
+        }, 10000);
+    }
 
 	public void despawn(AnohaLocation loc) {
 		if (loc.getSpawned() == null) {

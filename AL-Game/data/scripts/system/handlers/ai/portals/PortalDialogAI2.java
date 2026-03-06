@@ -46,8 +46,8 @@ import java.util.List;
 /****/
 
 @AIName("portal_dialog")
-public class PortalDialogAI2 extends PortalAI2
-{
+public class PortalDialogAI2 extends PortalAI2 {
+
 	protected int rewardDialogId = 5;
 	protected int startingDialogId = 10;
 	protected int questDialogId = 10;
@@ -74,7 +74,7 @@ public class PortalDialogAI2 extends PortalAI2
 			case 832996: //Tiamat Stronghold [Asmodians].
 			case 832997: //[Anguished] Dragon Lord Refuge.
 			case 832998: //Dragon Lord Refuge.
-				startLifeTask();
+/* 				startLifeTask(); */
 			break;
 			case 730883: //[Infernal] Illuminary Obelisk.
 			    announceIlluminaryObeliskOpen();
@@ -82,14 +82,14 @@ public class PortalDialogAI2 extends PortalAI2
         }
 	}
 	
-	private void startLifeTask() {
+/* 	private void startLifeTask() {
 		ThreadPoolManager.getInstance().schedule(new Runnable() {
 			@Override
 			public void run() {
 				AI2Actions.deleteOwner(PortalDialogAI2.this);
 			}
 		}, 120000); //2 Minutes.
-	}
+	} */
 	
 	@Override
 	public boolean onDialogSelect(Player player, int dialogId, int questId, int extendedRewardIndex) {

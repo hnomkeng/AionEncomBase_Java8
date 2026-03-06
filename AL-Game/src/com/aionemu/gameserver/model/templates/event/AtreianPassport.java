@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -16,6 +15,7 @@
  */
 package com.aionemu.gameserver.model.templates.event;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.datatype.XMLGregorianCalendar;
-
-import org.joda.time.DateTime;
 
 import com.aionemu.gameserver.model.AttendType;
 import com.aionemu.gameserver.utils.gametime.DateTimeUtil;
@@ -83,12 +81,12 @@ public class AtreianPassport {
 		return name;
 	}
 
-	public DateTime getPeriodStart() {
-		return DateTimeUtil.getDateTime(pStart.toGregorianCalendar());
+	public ZonedDateTime getPeriodStart() {
+		return DateTimeUtil.fromCalendar(pStart.toGregorianCalendar());
 	}
 
-	public DateTime getPeriodEnd() {
-		return DateTimeUtil.getDateTime(pEnd.toGregorianCalendar());
+	public ZonedDateTime getPeriodEnd() {
+		return DateTimeUtil.fromCalendar(pEnd.toGregorianCalendar());
 	}
 
 	public List<AtreianPassportRewards> getAtreianPassportRewards() {

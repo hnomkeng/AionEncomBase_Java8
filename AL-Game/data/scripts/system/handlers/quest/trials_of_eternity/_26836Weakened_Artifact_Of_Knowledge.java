@@ -135,7 +135,6 @@ public class _26836Weakened_Artifact_Of_Knowledge extends QuestHandler {
 				case 246425:
                 case 246426: {
 					qs.setQuestVar(9);
-					playQuestMovie(env, 955);
 					return defaultOnKillEvent(env, 246425, 0, 1, 1) && defaultOnKillEvent(env, 246426, 0, 2, 1);
                 }  
 				case 247075: {

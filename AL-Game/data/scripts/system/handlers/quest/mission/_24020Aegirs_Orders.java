@@ -53,12 +53,12 @@ public class _24020Aegirs_Orders extends QuestHandler {
             return false;
         } if (qs.getStatus() == QuestStatus.START) {
             if (env.getDialog() == QuestDialog.START_DIALOG) {
-                qs.setStatus(QuestStatus.REWARD);
-                updateQuestStatus(env);
                 return sendQuestDialog(env, 1011);
-            } else {
-                return sendQuestStartDialog(env);
-            }
+            } else if (env.getDialogId() == 1009) {
+				qs.setStatus(QuestStatus.REWARD);
+				updateQuestStatus(env);
+				return sendQuestEndDialog(env);
+			}
         } else if (qs.getStatus() == QuestStatus.REWARD) {
             if (env.getDialogId() == 23) {
                 int[] ids = {24021, 24022, 24023, 24024, 24025, 24026};

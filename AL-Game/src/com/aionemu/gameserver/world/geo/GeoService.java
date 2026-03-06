@@ -49,8 +49,7 @@ public class GeoService {
 		if (GeoDataConfig.GEO_MONONO2_IN_USE) {
 			log.info("MONONO2 GEO: active in geodata.properties, you must use only MONONO2 GEODATA here |data|geo");
 		} else {
-			log.info(
-					"MONONO2 GEO: deactivated in geodata.properties, you must use only STANDART GEODATA here |data|geo");
+			log.info("MONONO2 GEO: deactivated in geodata.properties, you must use only STANDART GEODATA here |data|geo");
 		}
 
 		this.geoData.loadGeoMaps();
@@ -70,8 +69,7 @@ public class GeoService {
 	}
 
 	public float getZ(VisibleObject object) {
-		float newZ = this.geoData.getMap(object.getWorldId()).getZ(object.getX(), object.getY(), object.getZ(),
-				object.getInstanceId());
+		float newZ = this.geoData.getMap(object.getWorldId()).getZ(object.getX(), object.getY(), object.getZ(), object.getInstanceId());
 		if (GeoDataConfig.GEO_ENABLE) {
 			newZ += 0.001f;
 		}
@@ -114,13 +112,21 @@ public class GeoService {
 		return this.geoData.getMap(worldId).getDoorName(worldId, meshFile, x, y, z);
 	}
 
-	public CollisionResults getCollisions(VisibleObject object, float x, float y, float z, boolean changeDirection,
-			byte intentions) {
-		return this.geoData.getMap(object.getWorldId()).getCollisions(object.getX(), object.getY(),
-				object.getZ() - 0.6f, x, y, z, changeDirection, true, object.getInstanceId(), intentions);
+	public CollisionResults getCollisions(VisibleObject object, float x, float y, float z, boolean changeDirection, byte intentions) {
+		return this.geoData.getMap(object.getWorldId()).getCollisions(object.getX(), object.getY(), object.getZ() - 0.6f, x, y, z, changeDirection, true, object.getInstanceId(), intentions);
 	}
 
 	public boolean canSee(VisibleObject object, VisibleObject target) {
+
+    if (object == null || target == null) {
+        log.warn("GeoService.canSee(): object or target is null. object={}, target={}", object, target);
+        return false;
+    }
+
+    if (!object.isSpawned() || !target.isSpawned()) {
+        return false;
+    }
+
     // 1. 提前返回优化 / Early return optimization
     if (!GeoDataConfig.CANSEE_ENABLE) {
         return true;
@@ -155,14 +161,23 @@ public class GeoService {
         object.getX(), object.getY(), object.getZ() + objectUp,
         target.getX(), target.getY(), target.getZ() + upperTarget, 
         limit, object.getInstanceId());
-}
+   }
 
-public boolean canPass(VisibleObject object, VisibleObject target) {
+    public boolean canPass(VisibleObject object, VisibleObject target) {
     // 1. 减少重复计算 / Reduce redundant calculations
     float distance = (float) MathUtil.getDistance(object, target);
     float targetCollision = target.getObjectTemplate().getBoundRadius().getCollision();
     float limit = distance - targetCollision;
     
+    if (object == null || target == null) {
+        log.warn("GeoService.canPass(): object или target равен null. object={}, target={}",  object, target);
+        return false;
+    }
+
+    if (!object.isSpawned() || !target.isSpawned()) {
+        return false;
+    }
+
     if (limit <= 0.0f) {
         return true;
     }
@@ -182,23 +197,20 @@ public boolean canPass(VisibleObject object, VisibleObject target) {
         object.getX(), object.getY(), object.getZ() + objectUp,
         target.getX(), target.getY(), target.getZ() + upperTarget, 
         limit, object.getInstanceId());
-}
+    }
 
-	public boolean canSee(int worldId, float x, float y, float z, float x1, float y1, float z1, float limit,
-			int instanceId) {
+	public boolean canSee(int worldId, float x, float y, float z, float x1, float y1, float z1, float limit, int instanceId) {
 		if (worldId == 301110000 || worldId == 301360000) {
 			return true;
 		}
 		return this.geoData.getMap(worldId).canSee(x, y, z, x1, y1, z1, limit, instanceId);
 	}
 
-	public boolean canPass(int worldId, float x, float y, float z, float x1, float y1, float z1, float limit,
-			int instanceId) {
+	public boolean canPass(int worldId, float x, float y, float z, float x1, float y1, float z1, float limit, int instanceId) {
 		return this.geoData.getMap(worldId).canPass(x, y, z, x1, y1, z1, limit, instanceId);
 	}
 
-	public boolean canPassWalker(int worldId, float x, float y, float z, float x1, float y1, float z1, float limit,
-			int instanceId) {
+	public boolean canPassWalker(int worldId, float x, float y, float z, float x1, float y1, float z1, float limit, int instanceId) {
 		return this.geoData.getMap(worldId).canPassWalker(x, y, z, x1, y1, z1, limit, instanceId);
 	}
 
@@ -206,11 +218,8 @@ public boolean canPass(VisibleObject object, VisibleObject target) {
 		return GeoDataConfig.GEO_ENABLE;
 	}
 
-	public Vector3f getClosestCollision(Creature object, float x, float y, float z, boolean changeDirection,
-			byte intentions) {
-		return this.geoData.getMap(object.getWorldId()).getClosestCollision(object.getX(), object.getY(),
-				object.getZ() - 0.6f, x, y, z, changeDirection, object.isInFlyingState(), object.getInstanceId(),
-				intentions);
+	public Vector3f getClosestCollision(Creature object, float x, float y, float z, boolean changeDirection, byte intentions) {
+		return this.geoData.getMap(object.getWorldId()).getClosestCollision(object.getX(), object.getY(), object.getZ() - 0.6f, x, y, z, changeDirection, object.isInFlyingState(), object.getInstanceId(), intentions);
 	}
 
 	public GeoType getConfiguredGeoType() {
@@ -222,7 +231,6 @@ public boolean canPass(VisibleObject object, VisibleObject target) {
 
 	private static final class SingletonHolder {
 		protected static final GeoService instance = new GeoService();
-
 		private SingletonHolder() {
 		}
 	}

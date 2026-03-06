@@ -52,11 +52,11 @@ public class _2100Order_Of_The_Captain extends QuestHandler {
 			return false;
 		if (qs.getStatus() == QuestStatus.START) {
 			if (env.getDialog() == QuestDialog.START_DIALOG) {
+				return sendQuestDialog(env, 1011);
+			} else if (env.getDialogId() == 1009) {
 				qs.setStatus(QuestStatus.REWARD);
 				updateQuestStatus(env);
-				return sendQuestDialog(env, 1011);
-			} else {
-				return sendQuestStartDialog(env);
+                return sendQuestEndDialog(env);
 			}
 		} else if (qs.getStatus() == QuestStatus.REWARD) {
 			if (env.getDialogId() == 23) {

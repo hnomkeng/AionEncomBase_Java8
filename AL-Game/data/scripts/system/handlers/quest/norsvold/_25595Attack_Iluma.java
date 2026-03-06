@@ -18,7 +18,6 @@ import com.aionemu.gameserver.questEngine.model.QuestDialog;
 import com.aionemu.gameserver.questEngine.model.QuestEnv;
 import com.aionemu.gameserver.questEngine.model.QuestState;
 import com.aionemu.gameserver.questEngine.model.QuestStatus;
-import com.aionemu.gameserver.services.QuestService;
 
 /****/
 /** Author Ghostfur & Unknown (Aion-Unique)
@@ -33,26 +32,12 @@ public class _25595Attack_Iluma extends QuestHandler {
 	
 	@Override
 	public void register() {
-		qe.registerOnEnterWorld(questId);
 		qe.registerOnKillInWorld(210100000, questId);
+		qe.registerQuestNpc(806116).addOnTalkEvent(questId);
 		qe.registerQuestNpc(806116).addOnTalkEvent(questId);
 	}
 	
-	@Override
-    public boolean onEnterWorldEvent(QuestEnv env) {
-        Player player = env.getPlayer();
-        QuestState qs = player.getQuestStateList().getQuestState(questId);
-		if (player.getWorldId() == 210100000) {
-            if (qs == null) {
-                env.setQuestId(questId);
-                if (QuestService.startQuest(env)) {
-					return true;
-				}
-            }
-        }
-        return false;
-    }
-	
+
 	@Override
 	public boolean onKillInWorldEvent(QuestEnv env) {
 		Player player = env.getPlayer();
@@ -70,7 +55,16 @@ public class _25595Attack_Iluma extends QuestHandler {
 		Player player = env.getPlayer();
 		QuestState qs = player.getQuestStateList().getQuestState(questId);
 		int targetId = env.getTargetId();
-		if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+        if (qs == null || qs.getStatus() == QuestStatus.NONE || qs.canRepeat()) {
+			if (targetId == 806116) {
+				if (env.getDialog() == QuestDialog.START_DIALOG) {
+					return sendQuestDialog(env, 4762);
+				} else {
+					return sendQuestStartDialog(env);
+				}
+			}
+		} 
+		else if (qs == null && qs.getStatus() == QuestStatus.REWARD) {
             if (targetId == 806116) {
                 if (env.getDialog() == QuestDialog.START_DIALOG) {
                     return sendQuestDialog(env, 10002);

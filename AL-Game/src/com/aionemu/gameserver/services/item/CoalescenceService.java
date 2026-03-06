@@ -35,11 +35,16 @@ import com.aionemu.gameserver.model.gameobjects.player.Player;
 import com.aionemu.gameserver.model.templates.item.ItemTemplate;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_COALESCENCE_RESULT;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_ITEM_USAGE_ANIMATION;
+import com.aionemu.gameserver.network.aion.serverpackets.SM_QUEST_ACTION;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_SYSTEM_MESSAGE;
 import com.aionemu.gameserver.services.item.ItemPacketService.ItemDeleteType;
 import com.aionemu.gameserver.utils.PacketSendUtility;
 import com.aionemu.gameserver.utils.ThreadPoolManager;
 import com.aionemu.gameserver.utils.audit.AuditLogger;
+import com.aionemu.gameserver.questEngine.model.QuestEnv;
+import com.aionemu.gameserver.questEngine.QuestEngine;
+import com.aionemu.gameserver.questEngine.model.QuestStatus;
+import com.aionemu.gameserver.questEngine.model.QuestState;
 
 /**
  * @author Ranastic
@@ -48,29 +53,24 @@ import com.aionemu.gameserver.utils.audit.AuditLogger;
 public class CoalescenceService {
 	private Logger log = LoggerFactory.getLogger(CoalescenceService.class);
 
-	public void letsCoalescence(final Player player, int core_item_object_id,
-			final List<Integer> material_item_object_id_collection) {
+	public void letsCoalescence(final Player player, int core_item_object_id, final List<Integer> material_item_object_id_collection) {
 		final Item core_item = player.getInventory().getItemByObjId(core_item_object_id);
 		if (core_item.getEnchantLevel() == 25) {
 			PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_CANT_ENCHANT_ITEM);
 			return;
 		}
 		if (material_item_object_id_collection.size() == 0) {
-			AuditLogger.info(player.getName(), player.getObjectId(),
-					"Possible hack Coalescence. His material equals 0");
+			AuditLogger.info(player.getName(), player.getObjectId(), "Possible hack Coalescence. His material equals 0");
 			return;
 		}
-		PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(),
-				core_item.getObjectId(), core_item.getItemId(), 4000, 23, 68), true);
+		PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), core_item.getObjectId(), core_item.getItemId(), 4000, 23, 68), true);
 		final ItemUseObserver observer = new ItemUseObserver() {
 			@Override
 			public void abort() {
 				player.getController().cancelTask(TaskId.ITEM_USE);
 				player.removeItemCoolDown(core_item.getItemTemplate().getUseLimits().getDelayId());
-				PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE
-						.STR_ITEM_CANCELED(new DescriptionId(core_item.getItemTemplate().getNameId())));
-				PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(),
-						core_item.getObjectId(), core_item.getItemId(), 0, 2, 0), true);
+				PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_ITEM_CANCELED(new DescriptionId(core_item.getItemTemplate().getNameId())));
+				PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), core_item.getObjectId(), core_item.getItemId(), 0, 2, 0), true);
 				player.getObserveController().removeObserver(this);
 			}
 		};
@@ -90,13 +90,7 @@ public class CoalescenceService {
 				int bonus_item_count = 0;
 				Map<Integer, ItemTemplate> item_templates = DataManager.ITEM_DATA.getAllItems();
 				for (ItemTemplate item_template : item_templates.values()) {
-					if (item_template.isArchdaeva() && item_template.getEquipmentType() == core_item.getEquipmentType()
-							&& (item_template.getLevel() >= 66 && item_template.getLevel() <= 74)
-							&& !item_template.getName().contains("n_m3_") && !item_template.getName().contains("npc_")
-							&& !item_template.getName().contains("Pvp_") && !item_template.getName().contains("dagger_")
-							&& !item_template.getName().contains("polearm_d_")
-							&& !item_template.getName().contains("polearm_a_")
-							&& !item_template.getName().contains("polearm_")) {
+					if (item_template.isArchdaeva() && item_template.getEquipmentType() == core_item.getEquipmentType() && (item_template.getLevel() >= 66 && item_template.getLevel() <= 74) && !item_template.getName().contains("n_m3_") && !item_template.getName().contains("npc_") && !item_template.getName().contains("Pvp_") && !item_template.getName().contains("dagger_") && !item_template.getName().contains("polearm_d_") && !item_template.getName().contains("polearm_a_") && !item_template.getName().contains("polearm_")) {
 						ids_collections.add(item_template.getTemplateId());
 					}
 				}
@@ -135,15 +129,33 @@ public class CoalescenceService {
 					ItemService.addItem(player, bonus_item_id_taken, bonus_item_count);
 					// TODO message for bonus
 				}
-				PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(),
-						core_item.getObjectId(), core_item.getItemId(), 0, 24, 0), true);
-				PacketSendUtility.sendPacket(player,
-						new SM_SYSTEM_MESSAGE(1403620, new DescriptionId(core_item.getItemTemplate().getNameId())));
-				PacketSendUtility.sendPacket(player, new SM_COALESCENCE_RESULT(core_item.getItemId(),
-						core_item.getObjectId(), bonus_item_id_taken, bonus_item_count, result_of_random));
+				PacketSendUtility.broadcastPacket(player, new SM_ITEM_USAGE_ANIMATION(player.getObjectId(), core_item.getObjectId(), core_item.getItemId(), 0, 24, 0), true);
+				PacketSendUtility.sendPacket(player, new SM_SYSTEM_MESSAGE(1403620, new DescriptionId(core_item.getItemTemplate().getNameId())));
+				PacketSendUtility.sendPacket(player, new SM_COALESCENCE_RESULT(core_item.getItemId(), core_item.getObjectId(), bonus_item_id_taken, bonus_item_count, result_of_random));
+                updateQuestsOnCoalescenceComplete(player, core_item, result_of_random);
 			}
 		}, 4000));
 	}
+
+    public void updateQuestsOnCoalescenceComplete(Player player, Item coreItem, boolean success) {
+    if (player.getQuestStateList().hasQuest(15542)) {
+        QuestState qs = player.getQuestStateList().getQuestState(15542);
+        if (qs != null && qs.getStatus() == QuestStatus.START) {
+            qs.setStatus(QuestStatus.REWARD);
+            PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(15542, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+            player.getController().updateNearbyQuests();
+        }
+    }
+    
+    if (player.getQuestStateList().hasQuest(25542)) {
+        QuestState qs = player.getQuestStateList().getQuestState(25542);
+        if (qs != null && qs.getStatus() == QuestStatus.START) {
+            qs.setStatus(QuestStatus.REWARD);
+            PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(25542, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+            player.getController().updateNearbyQuests();
+          }
+       }
+    }
 
 	public static CoalescenceService getInstance() {
 		return NewSingletonHolder.INSTANCE;

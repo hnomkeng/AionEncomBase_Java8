@@ -8,9 +8,6 @@
     <spawn npc_id="731673" respawn_time="60">
       <spot x="2049.941162" y="1574.954224" z="592.22534" h="0" entity_id="60" />
     </spawn>
-    <spawn npc_id="703392" respawn_time="0">
-      <spot x="1540.241089" y="1457.001709" z="572.9514" h="90" entity_id="2050" />
-    </spawn>
     <spawn npc_id="203842" respawn_time="60">
       <spot x="1968.490967" y="1772.894897" z="576.7586" h="60" />
     </spawn>

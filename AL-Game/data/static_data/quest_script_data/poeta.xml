@@ -20,13 +20,13 @@
 	<report_to id="1119" start_npc_ids="203075" end_npc_ids="203080" item_id="182200225"/>
 	
 	<!-- The Snuffler Headache (Elyos Only) -->
-	<item_collecting id="1105" start_npc_ids="203050"/>
+	<item_collecting id="1105" start_npc_ids="203050" />
 	<!-- Pernos's Robe (Elyos Only) -->
 	<item_collecting id="1116" start_npc_ids="203060"/>
 	<!-- Light Up The Night (Elyos Only) -->
 	<item_collecting id="1117" start_npc_ids="203074"/>
 	<!-- Oz's Prayer Beads (Elyos Only) -->
-	<item_collecting id="1121" start_npc_ids="203081"/>
+	<item_collecting id="1121" start_npc_ids="203081" end_npc_ids="203081" start_dialog_id2="2375"/>
 	<!-- Avenging Tutty (Elyos Only) -->
 	<item_collecting id="1124" start_npc_ids="790001"/>
 	<!-- Mushroom Research (Elyos Only) -->

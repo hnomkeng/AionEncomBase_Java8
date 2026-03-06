@@ -70,6 +70,7 @@ import com.aionemu.gameserver.services.player.GrowthEnergy;
 import com.aionemu.gameserver.skillengine.model.SkillTemplate;
 import com.aionemu.gameserver.utils.MathUtil;
 import com.aionemu.gameserver.utils.PacketSendUtility;
+import com.aionemu.gameserver.utils.ThreadPoolManager;
 import com.aionemu.gameserver.utils.stats.StatFunctions;
 import com.aionemu.gameserver.world.World;
 import com.aionemu.gameserver.world.knownlist.Visitor;
@@ -91,14 +92,31 @@ public class NpcController extends CreatureController<Npc> {
 	public void see(VisibleObject object) {
 		super.see(object);
 		Npc owner = getOwner();
+		
 		if (object instanceof Creature) {
 			owner.getAi2().onCreatureEvent(AIEventType.CREATURE_SEE, (Creature) object);
 		}
+		
 		if (object instanceof Player) {
-			// TODO see player ai event
+			Player player = (Player) object;
+			
 			if (owner.getLifeStats().isAlreadyDead()) {
-				DropService.getInstance().see((Player) object, owner);
+				if (!owner.isInState(CreatureState.DEAD) && !owner.isInState(CreatureState.FLOATING_CORPSE)) {
+					owner.setState(CreatureState.DEAD);
+				}
+				
+				DropService.getInstance().see(player, owner);
+				
+				ThreadPoolManager.getInstance().schedule(new Runnable() {
+					@Override
+					public void run() {
+						if (owner.isSpawned() && owner.getLifeStats().isAlreadyDead()) {
+							PacketSendUtility.sendPacket(player, new SM_EMOTION(owner, EmotionType.DIE, 0, 0));
+						}
+					}
+				}, 100);
 			}
+			// TODO see player ai event
 		} else if (object instanceof Summon) {
 			// TODO see summon ai event
 		}
@@ -115,10 +133,11 @@ public class NpcController extends CreatureController<Npc> {
 		} else {
 			owner.setState(CreatureState.NPC_IDLE);
 		}
+		
 		owner.getLifeStats().setCurrentHpPercent(100);
 		owner.getLifeStats().setCurrentMpPercent(100);
 		owner.getAi2().onGeneralEvent(AIEventType.RESPAWNED);
-
+		
 		if (owner.getSpawn().canFly()) {
 			owner.setState(CreatureState.FLYING);
 		}
@@ -126,6 +145,7 @@ public class NpcController extends CreatureController<Npc> {
 		if (owner.getSpawn().getState() != 0) {
 			owner.setState(owner.getSpawn().getState());
 		}
+		
 	}
 
 	@Override
@@ -160,6 +180,12 @@ public class NpcController extends CreatureController<Npc> {
 	@Override
 	public void onDie(Creature lastAttacker) {
 		Npc owner = getOwner();
+		
+		owner.unsetState(CreatureState.ACTIVE);
+		owner.unsetState(CreatureState.FLYING);
+		owner.unsetState(CreatureState.GLIDING);
+		owner.setState(CreatureState.DEAD);
+		
 		if (owner.getSpawn().hasPool()) {
 			owner.getSpawn().setUse(false);
 		}
@@ -172,7 +198,7 @@ public class NpcController extends CreatureController<Npc> {
 			}
 			owner.getPosition().getWorldMapInstance().getInstanceHandler().onDie(owner);
 			owner.getAi2().onGeneralEvent(AIEventType.DIED);
-		} finally { // always make sure npc is schedulled to respawn
+		} finally { // always make sure npc is scheduled to respawn
 			if (owner.getAi2().poll(AIQuestion.SHOULD_DECAY)) {
 				addTask(TaskId.DECAY, RespawnService.scheduleDecayTask(owner));
 			}
@@ -327,8 +353,8 @@ public class NpcController extends CreatureController<Npc> {
 								kinahCount = 1000;
 							}
 							break;
-						case 210050000: // Inggison.
-						case 220070000: // Gelkmaros.
+						case 210130000: // Inggison [Master Server].
+						case 220140000: // Gelkmaros [Master Server].
 							if (player.getLevel() < getOwner().getLevel() + 5) {
 								kinahCount = Rnd.get(100, 3500) * player.getLevel();
 							} else if (player.getLevel() > getOwner().getLevel() + 5) {
@@ -390,15 +416,6 @@ public class NpcController extends CreatureController<Npc> {
 						}
 						player.getInventory().increaseKinah(kinahCount);
 					}
-					// Reward InGameShop.
-					/* switch (player.getWorldId()) {
-					// Idian Depths.
-					case 210090000:
-					case 220100000:
-						InGameShopEn.getInstance().addToll(player, (long) (0 * player.getRates().getTollRewardRate()));
-						PacketSendUtility.sendSys1Message(player, "\uE083", "Kamu Jangan Ngepet ya");
-						break;
-					} */
 					// Berdin's Star.
 					if (getOwner().getLevel() >= 10) {
 						player.getCommonData().addBerdinStar(1575000); // 0.14%

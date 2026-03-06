@@ -49,7 +49,6 @@ public class _28742A_Flurry_Of_Activity extends QuestHandler {
 					case START_DIALOG: {
 						return sendQuestDialog(env, 4762);
 					}
-					case ACCEPT_QUEST:
 					case ACCEPT_QUEST_SIMPLE:
 						return sendQuestStartDialog(env);
 					case REFUSE_QUEST_SIMPLE:
@@ -57,17 +56,17 @@ public class _28742A_Flurry_Of_Activity extends QuestHandler {
 				}
 			}
 		}
-		if (qs == null || qs.getStatus() == QuestStatus.START) {
+		else if (qs.getStatus() == QuestStatus.START) {
 			if (targetId == 804732) {
 				switch (env.getDialog()) {
 					case START_DIALOG: {
 						return sendQuestDialog(env, 1011);
 				    } case CHECK_COLLECTED_ITEMS: {
-                        return checkQuestItems(env, 0, 1, true, 10000, 10001);
+                        return checkQuestItems(env, 0, 1, true, 5, 10001);
                     }
 				}
 			}
-		} else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+		} else if (qs != null && qs.getStatus() == QuestStatus.REWARD) {
 			if (targetId == 804732) {
 				return sendQuestEndDialog(env);
 			}

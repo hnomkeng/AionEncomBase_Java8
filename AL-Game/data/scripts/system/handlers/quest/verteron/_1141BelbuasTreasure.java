@@ -18,10 +18,7 @@ package quest.verteron;
 
 import com.aionemu.gameserver.model.gameobjects.player.Player;
 import com.aionemu.gameserver.questEngine.handlers.QuestHandler;
-import com.aionemu.gameserver.questEngine.model.QuestDialog;
-import com.aionemu.gameserver.questEngine.model.QuestEnv;
-import com.aionemu.gameserver.questEngine.model.QuestState;
-import com.aionemu.gameserver.questEngine.model.QuestStatus;
+import com.aionemu.gameserver.questEngine.model.*;
 
 /**
  * @author Mr. Poke, Dune11
@@ -63,15 +60,28 @@ public class _1141BelbuasTreasure extends QuestHandler {
 				}
 				else if (env.getDialog() == QuestDialog.SELECT_REWARD) {
 					changeQuestStep(env, 0, 0, true); // reward
-					return sendQuestDialog(env, 5);
+				    return sendQuestEndDialog(env);
 				}
 			}
 		}
-		else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+		else if (qs != null && qs.getStatus() == QuestStatus.REWARD) {
 			if (targetId == 700122) { // Belbua's Wine Barrel
 				return sendQuestEndDialog(env);
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public boolean onCanAct(QuestEnv env, QuestActionType questEventType, Object... objects) {
+		Player player = env.getPlayer();
+		QuestState qs = player.getQuestStateList().getQuestState(env.getQuestId());
+		int targetId = env.getTargetId();
+		if (targetId == 700122) {
+			if (qs == null && (qs.getStatus() == QuestStatus.START || qs.getStatus() == QuestStatus.REWARD)) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

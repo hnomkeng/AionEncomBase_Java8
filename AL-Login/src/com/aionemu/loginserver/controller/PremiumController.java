@@ -15,7 +15,6 @@
  *  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package com.aionemu.loginserver.controller;
 
 import org.slf4j.Logger;
@@ -51,6 +50,7 @@ public class PremiumController {
 
     public void requestBuy(int accountId, int requestId, long cost, byte serverId) {
         long points = this.dao.getPoints(accountId);
+        long luna = this.dao.getLuna(accountId);
 
         GameServerInfo server = GameServerTable.getGameServerInfo(serverId);
         if (server == null || server.getConnection() == null || !server.isAccountOnGameServer(accountId)) {
@@ -58,26 +58,25 @@ public class PremiumController {
             return;
         }
 
-        //adding new tolls
         if (cost < 0) {
             long ncnt = points + (cost * -1);
             dao.updatePoints(accountId, ncnt, 0);
-            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_ADD, ncnt));
+            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_ADD, ncnt, luna));
             return;
         }
 
         if (points < cost) {
-            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_LOW_POINTS, points));
+            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_LOW_POINTS, points, luna));
             return;
         }
 
         if (dao.updatePoints(accountId, points, cost)) {
             points -= cost;
-            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_OK, points));
-            log.info("Acount " + accountId + " succed in purchasing lot #" + requestId + " for " + cost + " from server #" + serverId);
+            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_OK, points, luna));
+            log.info("Account " + accountId + " succeeded in purchasing lot #" + requestId + " for " + cost + " from server #" + serverId);
         } else {
-            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_FAIL, points));
-            log.info("Acount " + accountId + " failed in purchasing lot #" + requestId + " for " + cost + " from server #" + serverId + ". !updatePoints");
+            server.getConnection().sendPacket(new SM_PREMIUM_RESPONSE(requestId, RESULT_FAIL, points, luna));
+            log.info("Account " + accountId + " failed in purchasing lot #" + requestId + " for " + cost + " from server #" + serverId + ". !updatePoints");
         }
     }
 }

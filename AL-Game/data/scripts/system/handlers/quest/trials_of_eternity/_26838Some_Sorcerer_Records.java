@@ -32,7 +32,6 @@ public class _26838Some_Sorcerer_Records extends QuestHandler {
     }
 	
     public void register() {
-        qe.registerQuestNpc(806575).addOnQuestStart(questId);
         qe.registerQuestNpc(806575).addOnTalkEvent(questId);
 		qe.registerQuestNpc(703455).addOnTalkEvent(questId);
 		qe.registerQuestNpc(806575).addOnAtDistanceEvent(questId);
@@ -44,25 +43,7 @@ public class _26838Some_Sorcerer_Records extends QuestHandler {
 		int targetId = env.getTargetId();
 		final QuestState qs = player.getQuestStateList().getQuestState(questId);
 		QuestDialog dialog = env.getDialog();
-		if (qs == null || qs.getStatus() == QuestStatus.NONE) {
-			if (targetId == 806575) {
-				switch (env.getDialog()) {
-					case START_DIALOG: {
-						return sendQuestDialog(env, 4762);
-					}
-					case ACCEPT_QUEST:
-					case ACCEPT_QUEST_SIMPLE:
-						return sendQuestStartDialog(env);
-					case REFUSE_QUEST_SIMPLE:
-				        return closeDialogWindow(env);
-				}
-			}
-		} else if (targetId == 703455) {
-			if (dialog == QuestDialog.USE_OBJECT) {
-				closeDialogWindow(env);
-				return true;
-			}
-		} else if (qs.getStatus() == QuestStatus.START) {
+        if (qs == null || qs.getStatus() == QuestStatus.START) {
 			if (targetId == 806575) {
 				switch (env.getDialog()) {
 					case START_DIALOG: {
@@ -78,7 +59,14 @@ public class _26838Some_Sorcerer_Records extends QuestHandler {
 					}
 				}
 			}
-		} else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+		}
+        if (targetId == 703455) {
+			if (dialog == QuestDialog.USE_OBJECT) {
+				closeDialogWindow(env);
+				return true;
+			}
+		}
+        else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
             if (targetId == 806575) {
                 if (env.getDialog() == QuestDialog.START_DIALOG) {
                     return sendQuestDialog(env, 10002);

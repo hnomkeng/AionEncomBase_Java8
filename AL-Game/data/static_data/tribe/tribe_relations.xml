@@ -3437,7 +3437,8 @@
     <none>FIELD_OBJECT_ALL</none>
   </tribe>
   <tribe name="F6_RAID_TRANSFER" base="GUARD">
-    <friendly>PC_DARK F6_RAID_GUARD_DARK</friendly>
+    <aggressive>PC_DARK F6_RAID_TRANSFER_DARK F6_RAID_GUARD_DARK</aggressive>
+    <friendly>PC F6_RAID_GUARD</friendly>
     <none>MONSTER</none>
   </tribe>
   <tribe name="F6_RAID_GUARD" base="GUARD">
@@ -3451,7 +3452,8 @@
     <none>MONSTER</none>
   </tribe>
   <tribe name="F6_RAID_TRANSFER_DARK" base="GUARD_DARK">
-    <friendly>PC F6_RAID_GUARD</friendly>
+    <aggressive>PC F6_RAID_TRANSFER F6_RAID_GUARD</aggressive>
+    <friendly>PC_DARK F6_RAID_GUARD_DARK</friendly>
     <none>MONSTER</none>
   </tribe>
   <tribe name="IDETERNITY_03_FALLINGROCK" base="USEALL">

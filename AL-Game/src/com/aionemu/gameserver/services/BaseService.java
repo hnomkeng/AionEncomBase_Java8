@@ -159,7 +159,7 @@ public class BaseService {
 
 	public void capture(int id, Race race) {
 		if (!isActive(id)) {
-			log.info("Detecting not active base capture.");
+			//log.info("Detecting not active base capture.");
 			return;
 		}
 		getActiveBase(id).setRace(race);

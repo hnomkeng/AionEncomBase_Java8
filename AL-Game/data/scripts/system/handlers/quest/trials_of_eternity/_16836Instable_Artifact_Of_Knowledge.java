@@ -133,7 +133,6 @@ public class _16836Instable_Artifact_Of_Knowledge extends QuestHandler {
 				case 246431:
                 case 246432: {
 					qs.setQuestVar(9);
-					playQuestMovie(env, 952);
 					return defaultOnKillEvent(env, 246431, 0, 1, 1) && defaultOnKillEvent(env, 246432, 0, 2, 1);
                 }  
 				case 247075: {

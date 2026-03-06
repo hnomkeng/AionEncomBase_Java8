@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -17,8 +16,13 @@
 package com.aionemu.gameserver.model.account;
 
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.TimeZone;
 
+import com.aionemu.gameserver.configs.main.GSConfig;
 import com.aionemu.gameserver.model.gameobjects.Item;
 import com.aionemu.gameserver.model.gameobjects.player.PlayerAppearance;
 import com.aionemu.gameserver.model.gameobjects.player.PlayerCommonData;
@@ -26,9 +30,7 @@ import com.aionemu.gameserver.model.team.legion.Legion;
 import com.aionemu.gameserver.model.team.legion.LegionMember;
 
 /**
- * This class is holding information about player, that is displayed on char
- * selection screen, such as: player commondata, player's appearance and
- * creation/deletion time.
+ * This class is holding information about player, that is displayed on char selection screen, such as: player commondata, player's appearance and creation/deletion time.
  * 
  * @see PlayerCommonData
  * @see PlayerAppearance
@@ -44,8 +46,7 @@ public class PlayerAccountData {
 	private Timestamp deletionDate;
 	private LegionMember legionMember;
 
-	public PlayerAccountData(PlayerCommonData playerCommonData, CharacterBanInfo cbi, PlayerAppearance appereance,
-			List<Item> equipment, LegionMember legionMember) {
+	public PlayerAccountData(PlayerCommonData playerCommonData, CharacterBanInfo cbi, PlayerAppearance appereance, List<Item> equipment, LegionMember legionMember) {
 		this.playerCommonData = playerCommonData;
 		this.cbi = cbi;
 		this.appereance = appereance;
@@ -80,13 +81,27 @@ public class PlayerAccountData {
 	}
 
 	/**
-	 * Get time in seconds when this player will be deleted ( 0 if player was not
-	 * set to be deleted )
+	 * Get time in seconds when this player will be deleted ( 0 if player was not set to be deleted ). Время возвращается с учетом временной зоны сервера.
 	 * 
 	 * @return deletion time in seconds
 	 */
 	public int getDeletionTimeInSeconds() {
-		return deletionDate == null ? 0 : (int) (deletionDate.getTime() / 1000);
+		if (deletionDate == null) {
+			return 0;
+		}
+		
+		int timezoneOffset = 0;
+		try {
+			if (GSConfig.TIME_ZONE_ID != null && !GSConfig.TIME_ZONE_ID.isEmpty()) {
+				TimeZone tz = TimeZone.getTimeZone(GSConfig.TIME_ZONE_ID);
+				timezoneOffset = tz.getRawOffset() / 1000;
+			}
+		} catch (Exception e) {
+			timezoneOffset = TimeZone.getDefault().getRawOffset() / 1000;
+		}
+		
+		long localTimeSeconds = (deletionDate.getTime() / 1000) + timezoneOffset;
+		return (int) localTimeSeconds;
 	}
 
 	/**

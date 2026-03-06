@@ -48,11 +48,11 @@ public class _18740Its_Alive extends QuestHandler {
 					case START_DIALOG: {
 						return sendQuestDialog(env, 1011);
 				    } case CHECK_COLLECTED_ITEMS: {
-                        return checkQuestItems(env, 0, 1, true, 10000, 10001);
+                        return checkQuestItems(env, 0, 1, true, 5, 10001);
                     } 
 				}
 			}
-		} else if (qs == null || qs.getStatus() == QuestStatus.REWARD) {
+		} else if (qs != null && qs.getStatus() == QuestStatus.REWARD) {
 			if (targetId == 804707) {
 				return sendQuestEndDialog(env);
 			}

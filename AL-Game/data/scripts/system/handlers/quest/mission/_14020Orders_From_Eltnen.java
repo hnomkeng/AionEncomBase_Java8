@@ -53,12 +53,12 @@ public class _14020Orders_From_Eltnen extends QuestHandler {
             return false;
         } if (qs.getStatus() == QuestStatus.START) {
             if (env.getDialog() == QuestDialog.START_DIALOG) {
-                qs.setStatus(QuestStatus.REWARD);
-                updateQuestStatus(env);
                 return sendQuestDialog(env, 1011);
-            } else {
-                return sendQuestStartDialog(env);
-            }
+            } else if (env.getDialogId() == 1009) {
+				qs.setStatus(QuestStatus.REWARD);
+				updateQuestStatus(env);
+                return sendQuestEndDialog(env);
+			}
         } else if (qs.getStatus() == QuestStatus.REWARD) {
             if (env.getDialogId() == QuestDialog.SELECT_NO_REWARD.id()) {
                 int[] ids = {14021, 14022, 14023, 14024, 14025};

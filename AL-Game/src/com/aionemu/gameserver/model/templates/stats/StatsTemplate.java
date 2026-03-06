@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -171,4 +170,32 @@ public abstract class StatsTemplate {
 	public int getMBResist() {
 		return mboostresist;
 	}
+
+    public void setMainHandAttack(int mainHandAttack) {
+       this.mainHandAttack = mainHandAttack;
+    }
+
+    public void setMainHandAccuracy(int mainHandAccuracy) {
+       this.mainHandAccuracy = mainHandAccuracy;
+    }
+
+    public void setMainHandCritRate(int mainHandCritRate) {
+       this.mainHandCritRate = mainHandCritRate;
+    }
+
+    public void setHpRegenRate(int hpregen) {
+       this.hpregen = hpregen;
+    }
+
+    public void setRunSpeed(float runSpeed) {
+       this.runSpeed = runSpeed;
+    }
+
+    public void setWalkSpeed(float walkSpeed) {
+       this.walkSpeed = walkSpeed;
+    }
+
+    public void setAttackSpeed(float attackSpeed) {
+       this.attackSpeed = attackSpeed;
+    }
 }

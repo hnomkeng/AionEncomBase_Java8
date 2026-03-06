@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -17,6 +16,7 @@
 package com.aionemu.gameserver.services.events;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,8 +58,7 @@ public class EventWindowService {
 	public void initialize() {
 		if (allEvents.size() != 0) {
 			for (EventsWindow eventsWindow : allEvents.values()) {
-				log.info("[EventWindowService] Start " + eventsWindow.getPeriodStart() + " End "
-						+ eventsWindow.getPeriodEnd());
+				log.info("[EventWindowService] Start " + eventsWindow.getPeriodStart() + " End " + eventsWindow.getPeriodEnd());
 			}
 		}
 	}
@@ -70,17 +69,17 @@ public class EventWindowService {
 	 * @return
 	 */
 	public Map<Integer, EventsWindow> getActiveEvents(Player player) {
+		ZonedDateTime now = ZonedDateTime.now();
 		for (EventsWindow eventsWindow : allEvents.values()) {
 			if (activeEvents.containsValue(eventsWindow.getId())) {
 				continue;
 			}
-			if (!eventsWindow.getPeriodStart().isBeforeNow() || !eventsWindow.getPeriodEnd().isAfterNow()) {
+			if (!eventsWindow.getPeriodStart().isBefore(now) || !eventsWindow.getPeriodEnd().isAfter(now)) {
 				continue;
 			}
 			if (player.getLevel() >= eventsWindow.getMinLevel() && player.getLevel() <= eventsWindow.getMaxLevel()) {
 				activeEventsForPlayer.put(eventsWindow.getId(), eventsWindow);
-				log.info("[EventWindowService] Start " + eventsWindow.getPeriodStart() + " End "
-						+ eventsWindow.getPeriodEnd());
+				log.info("[EventWindowService] Start " + eventsWindow.getPeriodStart() + " End " + eventsWindow.getPeriodEnd());
 			}
 		}
 		return activeEventsForPlayer;
@@ -96,10 +95,13 @@ public class EventWindowService {
 		getActiveEvents(player);
 		final int accountId = player.getPlayerAccount().getId();
 		final PlayerEventsWindowDAO playerEventsWindowDAO = DAOManager.getDAO(PlayerEventsWindowDAO.class);
+		ZonedDateTime now = ZonedDateTime.now();
+		
 		for (final EventsWindow eventsWindow : activeEventsForPlayer.values()) {
 			final int elapsed = playerEventsWindowDAO.getElapsed(accountId, eventsWindow.getId());
 			final int recivedCount = playerEventsWindowDAO.getRewardRecivedCount(accountId, eventsWindow.getId());
-			if (!eventsWindow.getPeriodStart().isBeforeNow() || !eventsWindow.getPeriodEnd().isAfterNow()) {
+			
+			if (!eventsWindow.getPeriodStart().isBefore(now) || !eventsWindow.getPeriodEnd().isAfter(now)) {
 				continue;
 			}
 			sendActiveEventsForPlayer.put(eventsWindow.getId(), eventsWindow);
@@ -107,11 +109,9 @@ public class EventWindowService {
 				playerEventsWindowDAO.insert(accountId, eventsWindow.getId(),
 						new Timestamp(System.currentTimeMillis()));
 			} else {
-				playerEventsWindowDAO.store(accountId, eventsWindow.getId(), new Timestamp(System.currentTimeMillis()),
-						elapsed); // Temp for updating TiemStamp
+				playerEventsWindowDAO.store(accountId, eventsWindow.getId(), new Timestamp(System.currentTimeMillis()), elapsed); // Temp for updating TiemStamp
 			}
-			log.info("Start counting id " + eventsWindow.getId() + " time " + eventsWindow.getRemainingTime()
-					+ " minute(s)");
+			log.info("Start counting id " + eventsWindow.getId() + " time " + eventsWindow.getRemainingTime() + " minute(s)");
 			ThreadPoolManager.getInstance().schedule(new Runnable() {
 
 				@Override
@@ -121,16 +121,12 @@ public class EventWindowService {
 							sendActiveEventsForPlayer.remove(eventsWindow.getId());
 							return;
 						}
-						playerEventsWindowDAO.setRewardRecivedCount(accountId, eventsWindow.getId(),
-								(recivedCount + 1)); // It also Set elapsed to 0 and updates TimeStamp
-														// (MySQL5PlayerEventsWindowDAO)
+						playerEventsWindowDAO.setRewardRecivedCount(accountId, eventsWindow.getId(),(recivedCount + 1)); // It also Set elapsed to 0 and updates TimeStamp
 						ItemTemplate itemTemplate = DataManager.ITEM_DATA.getItemTemplate(eventsWindow.getItemId());
-						PacketSendUtility.sendPacket(player,
-								SM_SYSTEM_MESSAGE.STR_MSG_GET_HCOIN_07(itemTemplate.getNameId()));
+						PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_GET_HCOIN_07(itemTemplate.getNameId()));
 						ItemService.addItem(player, eventsWindow.getItemId(), eventsWindow.getCount());
 						restartTimer(player, eventsWindow.getId());
-						PacketSendUtility.sendPacket(player,
-								new SM_EVENT_WINDOW_ITEMS(sendActiveEventsForPlayer.values()));
+						PacketSendUtility.sendPacket(player, new SM_EVENT_WINDOW_ITEMS(sendActiveEventsForPlayer.values()));
 					}
 				}
 			}, (eventsWindow.getRemainingTime() - elapsed) * 60000);
@@ -143,8 +139,10 @@ public class EventWindowService {
 		final int accountId = player.getPlayerAccount().getId();
 		final PlayerEventsWindowDAO playerEventsWindowDAO = DAOManager.getDAO(PlayerEventsWindowDAO.class);
 		final int recivedCount = playerEventsWindowDAO.getRewardRecivedCount(accountId, eventId);
+		ZonedDateTime now = ZonedDateTime.now();
+		
 		for (final EventsWindow eventsWindow : sendActiveEventsForPlayer.values()) {
-			if (!eventsWindow.getPeriodStart().isBeforeNow() || !eventsWindow.getPeriodEnd().isAfterNow()) {
+			if (!eventsWindow.getPeriodStart().isBefore(now) || !eventsWindow.getPeriodEnd().isAfter(now)) {
 				continue;
 			}
 			if (eventsWindow.getId() == eventId) {
@@ -156,11 +154,9 @@ public class EventWindowService {
 								sendActiveEventsForPlayer.remove(eventsWindow.getId());
 								return;
 							}
-							playerEventsWindowDAO.setRewardRecivedCount(accountId, eventsWindow.getId(),
-									(recivedCount + 1));
+							playerEventsWindowDAO.setRewardRecivedCount(accountId, eventsWindow.getId(), (recivedCount + 1));
 							ItemTemplate itemTemplate = DataManager.ITEM_DATA.getItemTemplate(eventsWindow.getItemId());
-							PacketSendUtility.sendPacket(player,
-									SM_SYSTEM_MESSAGE.STR_MSG_GET_HCOIN_07(itemTemplate.getNameId()));
+							PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_GET_HCOIN_07(itemTemplate.getNameId()));
 							ItemService.addItem(player, eventsWindow.getItemId(), eventsWindow.getCount());
 							restartTimer(player, eventId);
 						}

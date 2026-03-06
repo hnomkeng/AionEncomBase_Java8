@@ -120,46 +120,60 @@ public class QuestEngine implements GameEngine {
 		return SingletonHolder.instance;
 	}
 
-	public boolean onDialog(QuestEnv env) {
-		Player player = env.getPlayer();
-		try {
-			QuestHandler questHandler = null;
-			if (env.getQuestId() != 0) {
-				questHandler = getQuestHandlerByQuestId(env.getQuestId());
-				if (questHandler != null)
-					if (questHandler.onDialogEvent(env))
-						return true;
-					else {
-						QuestTemplate qt = DataManager.QUEST_DATA.getQuestById(env.getQuestId());
-						if (qt != null && qt.getCategory() == QuestCategory.CHALLENGE_TASK
-								&& player.getAccessLevel() > 0) {
-							PacketSendUtility.sendMessage(player,
-									"You're GM! So system won't apply countNextRepeatTime()");
-							return true;
-						} else if (qt != null && qt.getCategory() == QuestCategory.CHALLENGE_TASK
-								&& player.getAccessLevel() == 0) {
-							PacketSendUtility.sendPacket(env.getPlayer(), new SM_SYSTEM_MESSAGE(1400855, 9));
-						}
-					}
-			} else {
-				Npc npc = (Npc) env.getVisibleObject();
-				for (int questId : getQuestNpc(npc == null ? 0 : npc.getNpcId()).getOnTalkEvent()) {
-					questHandler = getQuestHandlerByQuestId(questId);
-					if (questHandler != null) {
-						env.setQuestId(questId);
-						if (questHandler.onDialogEvent(env)) {
-							return true;
-						}
-					}
-				}
-				env.setQuestId(0);
-			}
-		} catch (Exception ex) {
-			log.error("QE: exception in onDialog", ex);
-			return false;
-		}
-		return false;
-	}
+    public boolean onDialog(QuestEnv env) {
+    Player player = env.getPlayer();
+    try {
+        QuestHandler questHandler = null;
+        if (env.getQuestId() != 0) {
+            questHandler = getQuestHandlerByQuestId(env.getQuestId());
+            if (questHandler != null)
+                if (questHandler.onDialogEvent(env))
+                    return true;
+                else {
+                    QuestTemplate qt = DataManager.QUEST_DATA.getQuestById(env.getQuestId());
+                    if (qt != null && qt.getCategory() == QuestCategory.CHALLENGE_TASK && player.getAccessLevel() > 0) {
+                        PacketSendUtility.sendMessage(player, "You're GM! So system won't apply countNextRepeatTime()");
+                        return true;
+                    } else if (qt != null && qt.getCategory() == QuestCategory.CHALLENGE_TASK && player.getAccessLevel() == 0) {
+                        PacketSendUtility.sendPacket(env.getPlayer(), new SM_SYSTEM_MESSAGE(1400855, 9));
+                    }
+                }
+        } else {
+            Npc npc = (Npc) env.getVisibleObject();
+            List<Integer> onTalkEvents = getQuestNpc(npc == null ? 0 : npc.getNpcId()).getOnTalkEvent();
+            if (onTalkEvents == null || onTalkEvents.isEmpty()) {
+                log.debug("No quests registered for NPC: {}", npc.getNpcId());
+                return false;
+            }
+            for (int questId : onTalkEvents) {
+                QuestTemplate qt = DataManager.QUEST_DATA.getQuestById(questId);
+                if (qt == null) {
+                    log.warn("Quest template not found for ID: {}", questId);
+                    continue;
+                }
+                QuestState qs = player.getQuestStateList().getQuestState(questId);
+                if (qs == null || qs.getStatus() == QuestStatus.NONE) {
+                   QuestEnv checkEnv = new QuestEnv(env.getVisibleObject(), player, questId, env.getDialogId());
+                if (!QuestService.checkStartConditions(checkEnv, false)) {
+                      continue;
+                    }
+                }
+                questHandler = getQuestHandlerByQuestId(questId);
+                if (questHandler != null) {
+                    env.setQuestId(questId);
+                    if (questHandler.onDialogEvent(env)) {
+                        return true;
+                    }
+                }
+            }
+            env.setQuestId(0);
+        }
+    } catch (Exception ex) {
+        log.error("QE: exception in onDialog", ex);
+        return false;
+        }
+       return false;
+    }
 
 	public boolean onKill(QuestEnv env) {
 		try {

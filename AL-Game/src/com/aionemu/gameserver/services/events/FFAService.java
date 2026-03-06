@@ -74,8 +74,17 @@ public class FFAService {
 	private Object UnsummonType;
 	private static boolean isAvailable;
 
-	public FFAService() {
+
+	public void init() {
+		if (!FFAConfig.FFA_ENABLED) {
+			log.info("[FFAService] is disabled in configuration.");
+			isAvailable = false;
+			return;
+		}
+		
 		log.info("[FFAService] is initialized...");
+		isAvailable = true;
+		
 		// Nochsana Training Camp.
 		maps.add(new ArenaMap(300030000, 99,
 				Arrays.asList(new Float[] { 331f, 272f, 384f }, new Float[] { 314f, 325f, 380f },
@@ -282,9 +291,7 @@ public class FFAService {
 							@Override
 							public void visit(Player pl) {
 								if (!isInArena(pl) && pl.getBattleground() == null) {
-									PacketSendUtility.sendSys3Message(pl, "\uE00B",
-											"<FFA> Join the <FFA> map in writing: .ffa and play with " + players
-													+ " other players right now!!!");
+									PacketSendUtility.sendSys3Message(pl, "\uE00B", "<FFA> Join the <FFA> map in writing: .ffa and play with " + players + " other players right now!!!");
 								}
 							}
 						});
@@ -299,8 +306,7 @@ public class FFAService {
 						@Override
 						public void visit(Player pl) {
 							if (!isInArena(pl) && pl.getBattleground() == null) {
-								PacketSendUtility.sendSys3Message(pl, "\uE00B",
-										"<FFA> Join the <FFA> area, and try to win AP/GP. Write: .ffa!!!");
+								PacketSendUtility.sendSys3Message(pl, "\uE00B", "<FFA> Join the <FFA> area, and try to win AP/GP. Write: .ffa!!!");
 							}
 						}
 					});
@@ -344,8 +350,7 @@ public class FFAService {
 
 	private void announcePlayerCount() {
 		for (WorldMapInstance instance : getWorldMap().getInstances()) {
-			final String msg = "[FFA] There are currently: " + instance.getPlayersInside().size()
-					+ " player's on the map.";
+			final String msg = "[FFA] There are currently: " + instance.getPlayersInside().size() + " player's on the map.";
 			instance.doOnAllPlayers(new Visitor<Player>() {
 				@Override
 				public void visit(Player pl) {
@@ -368,16 +373,13 @@ public class FFAService {
 	}
 
 	public void onDie(final Player player, Creature lastAttacker) {
-		PacketSendUtility.broadcastPacket(player,
-				new SM_EMOTION(player, EmotionType.DIE, 0, lastAttacker == null ? 0 : lastAttacker.getObjectId()),
-				true);
+		PacketSendUtility.broadcastPacket(player, new SM_EMOTION(player, EmotionType.DIE, 0, lastAttacker == null ? 0 : lastAttacker.getObjectId()), true);
 		PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_DEATH_MESSAGE_ME);
 		player.getMoveController().abortMove();
 		player.setState(CreatureState.DEAD);
 		player.getObserveController().notifyDeathObservers(player);
 		player.getEffectController().removeAbnormalEffectsByTargetSlot(SkillTargetSlot.DEBUFF);
-		player.getEffectController().removeEffectByDispelCat(DispelCategoryType.ALL, SkillTargetSlot.DEBUFF, 100, 2,
-				100, false);
+		player.getEffectController().removeEffectByDispelCat(DispelCategoryType.ALL, SkillTargetSlot.DEBUFF, 100, 2, 100, false);
 		player.setTarget(null);
 		PacketSendUtility.sendPacket(player, new SM_TARGET_SELECTED(player));
 		if (lastAttacker instanceof Player) {
@@ -391,8 +393,7 @@ public class FFAService {
 						PlayerReviveService.ffaRevive(player);
 					}
 					Float[] spawn = getRandomSpawn();
-					TeleportService2.teleportTo(player, getWorldMap().getMapId(), player.getInstanceId(), spawn[0],
-							spawn[1], spawn[2]);
+					TeleportService2.teleportTo(player, getWorldMap().getMapId(), player.getInstanceId(), spawn[0], spawn[1], spawn[2]);
 				}
 			}
 		}, 6000);
@@ -429,8 +430,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_1;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -444,8 +444,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_2;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -459,8 +458,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_3;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -474,8 +472,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_4;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -489,8 +486,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_5;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -504,8 +500,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_6;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -519,8 +514,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_7;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -534,8 +528,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_8;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -549,8 +542,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_9;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override
@@ -564,8 +556,7 @@ public class FFAService {
 			for (WorldMapInstance instance : getWorldMap().getInstances()) {
 				ItemService.addItem(player, FFAConfig.FFA_SPREE_REWARD_ITEM, 1);
 				InGameShopEn.getInstance().addToll(player, FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY);
-				PacketSendUtility.sendMessage(player,
-						"You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
+				PacketSendUtility.sendMessage(player, "You've received " + FFAConfig.FFA_SPREE_REWARD_TOLL_QUANTITY + " tolls from FFA!");
 				final String msg = player.getName() + FFAConfig.FFA_SPREE_10;
 				instance.doOnAllPlayers(new Visitor<Player>() {
 					@Override

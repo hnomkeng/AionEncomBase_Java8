@@ -28,6 +28,7 @@ import com.aionemu.gameserver.network.aion.AionConnection.State;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_QUEST_ACTION;
 import com.aionemu.gameserver.network.aion.serverpackets.SM_STATS_INFO;
 import com.aionemu.gameserver.questEngine.model.QuestStatus;
+import com.aionemu.gameserver.questEngine.model.QuestState;
 import com.aionemu.gameserver.services.player.CreativityPanel.CreativityEssenceService;
 import com.aionemu.gameserver.services.player.CreativityPanel.CreativitySkillService;
 import com.aionemu.gameserver.services.player.CreativityPanel.CreativityStatsService;
@@ -67,39 +68,19 @@ public class CM_CREATIVITY_POINTS extends AionClientPacket {
 					if (point <= 255) {
 						CreativityStatsService.getInstance().onEssenceApply(activePlayer, type, plusSize, id, point);
 					} else if (point > 255) {
-						PacketSendUtility.sendBrightYellowMessageOnCenter(activePlayer,
-								"Essence bug detected... Please reset points or relog for solv this issue!");
+						PacketSendUtility.sendBrightYellowMessageOnCenter(activePlayer, "Essence bug detected... Please reset points or relog for solv this issue!");
 					}
 				} else if (pcp.getPanelCpType() == PanelCpType.LEARN_SKILL) {
 					CreativitySkillService.getInstance().learnSkill(activePlayer, id, point);
 				} else if (pcp.getPanelCpType() == PanelCpType.ENCHANT_SKILL) {
 					if (point > pcp.getCountMax()) {
-						log.warn("Allocated essence bug on enchant skill, allowed max point: " + pcp.getCountMax()
-								+ " Player Point: " + point + "Essence ID: " + id + " Player Name: "
-								+ activePlayer.getName());
+						log.warn("Allocated essence bug on enchant skill, allowed max point: " + pcp.getCountMax() + " Player Point: " + point + "Essence ID: " + id + " Player Name: " + activePlayer.getName());
 						return;
 					}
 					CreativitySkillService.getInstance().enchantSkill(activePlayer, id, point);
 				}
 			}
 			PacketSendUtility.sendPacket(activePlayer, new SM_STATS_INFO(activePlayer));
-
-			if (activePlayer.getQuestStateList().getQuestState(20522) != null
-					&& activePlayer.getQuestStateList().getQuestState(20522).getStatus() == QuestStatus.START) {
-				activePlayer.getQuestStateList().getQuestState(20522).setQuestVar(0);
-				activePlayer.getQuestStateList().getQuestState(20522).setStatus(QuestStatus.REWARD);
-				PacketSendUtility.sendPacket(activePlayer, new SM_QUEST_ACTION(20522, 4, 0));
-
-			}
-
-			if (activePlayer.getQuestStateList().getQuestState(10522) != null
-					&& activePlayer.getQuestStateList().getQuestState(10522).getStatus() == QuestStatus.START) {
-				activePlayer.getQuestStateList().getQuestState(10522).setQuestVar(0);
-				activePlayer.getQuestStateList().getQuestState(10522).setStatus(QuestStatus.REWARD);
-				PacketSendUtility.sendPacket(activePlayer, new SM_QUEST_ACTION(10522, 4, 0));
-
-			}
-
 			break;
 		case 1: // Reset
 			plusSize = readH();
@@ -119,6 +100,30 @@ public class CM_CREATIVITY_POINTS extends AionClientPacket {
 		}
 		if (type == 1) {
 			CreativityEssenceService.getInstance().onResetEssence(activePlayer, plusSize);
+		}
+		
+		// Check quests after applying creativity points
+		if (type == 0) {
+			checkQuestCompletion(activePlayer);
+		}
+	}
+	
+	private void checkQuestCompletion(Player player) {
+		if (player.getQuestStateList().hasQuest(20522)) {
+			QuestState qs = player.getQuestStateList().getQuestState(20522);
+			if (qs != null && qs.getStatus() == QuestStatus.START) {
+				qs.setStatus(QuestStatus.REWARD);
+				PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(20522, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+				player.getController().updateNearbyQuests();
+			}
+		}
+		if (player.getQuestStateList().hasQuest(10522)) {
+			QuestState qs = player.getQuestStateList().getQuestState(10522);
+			if (qs != null && qs.getStatus() == QuestStatus.START) {
+				qs.setStatus(QuestStatus.REWARD);
+				PacketSendUtility.sendPacket(player, new SM_QUEST_ACTION(10522, qs.getStatus(), qs.getQuestVars().getQuestVars()));
+				player.getController().updateNearbyQuests();
+			}
 		}
 	}
 }

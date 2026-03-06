@@ -1,5 +1,4 @@
 /*
-
  *
  *  Encom is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser Public License as published by
@@ -18,9 +17,10 @@ package com.aionemu.gameserver.model.house;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +42,7 @@ import com.aionemu.gameserver.world.World;
 import javolution.util.FastList;
 
 public class MaintenanceTask extends AbstractCronTask {
+
 	private static final Logger log = LoggerFactory.getLogger(MaintenanceTask.class);
 	private static final FastList<House> maintainedHouses;
 	private static MaintenanceTask instance;
@@ -129,9 +130,13 @@ public class MaintenanceTask extends AbstractCronTask {
 		if (!HousingConfig.ENABLE_HOUSE_PAY) {
 			return;
 		}
-		DateTime now = new DateTime();
-		DateTime previousRun = now.minus(getPeriod());
-		DateTime beforePreviousRun = previousRun.minus(getPeriod());
+		
+		ZonedDateTime now = ZonedDateTime.now();
+		long periodMillis = getPeriod() * 1000L;
+		
+		ZonedDateTime previousRun = now.minusNanos(periodMillis * 1_000_000L);
+		ZonedDateTime beforePreviousRun = previousRun.minusNanos(periodMillis * 1_000_000L);
+		
 		for (House house : maintainedHouses) {
 			if (house.isFeePaid()) {
 				continue;
@@ -150,22 +155,28 @@ public class MaintenanceTask extends AbstractCronTask {
 				putHouseToAuction(house, null);
 				continue;
 			}
-			if (payTime <= beforePreviousRun.getMillis()) {
-				DateTime plusDay = beforePreviousRun.minusDays(1);
-				if (payTime <= plusDay.getMillis()) {
-					impoundTime = now.getMillis();
+			
+			long beforePreviousRunMillis = beforePreviousRun.toInstant().toEpochMilli();
+			long previousRunMillis = previousRun.toInstant().toEpochMilli();
+			long nowMillis = now.toInstant().toEpochMilli();
+			
+			if (payTime <= beforePreviousRunMillis) {
+				ZonedDateTime plusDay = beforePreviousRun.minusDays(1);
+				if (payTime <= plusDay.toInstant().toEpochMilli()) {
+					impoundTime = nowMillis;
 					warnCount = 3;
 					putHouseToAuction(house, pcd);
 				} else {
-					impoundTime = now.plusDays(1).getMillis();
+					impoundTime = now.plusDays(1).toInstant().toEpochMilli();
 					warnCount = 2;
 				}
-			} else if (payTime <= previousRun.getMillis()) {
-				impoundTime = now.plus(getPeriod()).plusDays(1).getMillis();
+			} else if (payTime <= previousRunMillis) {
+				impoundTime = now.plusNanos(periodMillis * 1_000_000L).plusDays(1).toInstant().toEpochMilli();
 				warnCount = 1;
 			} else {
 				continue;
 			}
+			
 			if (pcd.isOnline()) {
 				if (warnCount == 3) {
 					PacketSendUtility.sendPacket(player, SM_SYSTEM_MESSAGE.STR_MSG_HOUSING_SEQUESTRATE);
@@ -188,8 +199,7 @@ public class MaintenanceTask extends AbstractCronTask {
 			Player player = playerCommonData.getPlayer();
 			player.getHouses().remove(house);
 			player.setHouseRegistry(null);
-			PacketSendUtility.sendPacket(player,
-					new SM_HOUSE_ACQUIRE(player.getObjectId(), house.getAddress().getId(), false));
+			PacketSendUtility.sendPacket(player, new SM_HOUSE_ACQUIRE(player.getObjectId(), house.getAddress().getId(), false));
 			PacketSendUtility.sendPacket(player, new SM_HOUSE_OWNER_INFO(player, null));
 		}
 	}
